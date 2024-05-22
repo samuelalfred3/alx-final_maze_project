@@ -1,30 +1,34 @@
-#include <stdio.h>
-#include <SDL2/SDL.h>
+#include "maze.h"
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
-
-int main(void)
+void drawWalls(Global *g, int worldMap[MAP_WIDTH][MAP_HEIGHT])
 {
-	SDL_Init(SDL_INIT_VIDEO);
-	
-	SDL_Window *window = SDL_CreateWindow("Maze Project", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
-	if (window == NULL)
+	int x, y;
+
+	for (x = 0; x < MAP_WIDTH; x++)
 	{
-		printf("SDL Window creation failed: %s\n", SDL_GetError());
-		return (1);
+		for (y = 0; y < MAP_HEIGHT; y++)
+		{
+			if (worldMap[x][y] > 0)
+			{
+				SDL_Rect wallRect;
+
+				wallRect.x = x * TILE_SIZE;
+				wallRect.y = y * TILE_SIZE;
+				wallRect.w = TILE_SIZE;
+				wallRect.h = TILE_SIZE;
+
+				if (worldMap[x][y] == 1)
+				{
+					SDL_SetRenderDrawColor(g->renderer, 0xFF, 0x00, 0x00, 0xFF);
+				}
+				else if (worldMap[x][y] == 2)
+				{
+					SDL_SetRenderDrawColor(g->renderer, 0x00, 0x00, 0xFF, 0xFF);
+				}
+
+				SDL_RenderFillRect(g->renderer, &wallRect);
+			}
+		}
 	}
-
-	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	SDL_RenderClear(renderer);
-
-	SDL_RenderPresent(renderer);
-
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	SDL_Quit();
-
-	return (0);
 }
 

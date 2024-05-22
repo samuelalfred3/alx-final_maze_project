@@ -1,101 +1,90 @@
-#include <stdio.h>
-#include <stdbool.h>
-#include <math.h>
-#include <SDL2/SDL.h>
+#include "maze.h"
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
-#define FOV_ANGLE (60 * M_PI / 180)
-#define NUM_RAYS WINDOW_WIDTH
-#define TILE_SIZE 64
+void performRaycasting(Global *g)
+{
+	int x;
+	for (x = 0; x < WINDOW_WIDTH; x++)
+	{
+		double cameraX = 2 * x / (double)WINDOW_WIDTH - 1;
+		double rayDirX = cos(g->player.angle + cameraX * FOV_ANGLE);
+		double rayDirY = sin(g->player.angle + cameraX * FOV_ANGLE);
 
-typedef struct {
-	float x;
-	float y;
-	float angle;
-} Player;
+		int mapX = (int)g->player.x / TILE_SIZE;
+		int mapY = (int)g->player.y / TILE_SIZE;
 
-typedef struct {
-	float distance;
-	bool hit;
-} RayHit;
+		double sideDistX;
+		double sideDistY;
 
-SDL_Window *window = NULL;
-SDL_Renderer *renderer = NULL;
-Player player;
+		double deltaDistX = fabs(1 / rayDirX);
+		double deltaDistY = fabs(1 / rayDirY);
+		double perpWallDist;
 
-void init() {
-	SDL_Init(SDL_INIT_VIDEO);
-	window = SDL_CreateWindow("Raycasting Demo", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	player.x = WINDOW_WIDTH / 2;
-	player.y = WINDOW_HEIGHT / 2;
-	player.angle = 0;
-}
+		int stepX;
+		int stepY;
 
-void destroy() {
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	SDL_Quit();
-}
+		int hit = 0;
+		int side;
 
-void draw_rect(int x, int y, int width, int height, Uint8 r, Uint8 g, Uint8 b) {
-	SDL_Rect rect = { x, y, width, height };
-	SDL_SetRenderDrawColor(renderer, r, g, b, SDL_ALPHA_OPAQUE);
-	SDL_RenderFillRect(renderer, &rect);
-}
-
-void draw_ray(float ray_angle, RayHit ray_hit) {
-	float angle_diff = ray_angle - player.angle;
-	float distance_projection = WINDOW_WIDTH / (2 * tan(FOV_ANGLE / 2));
-	float ray_height = TILE_SIZE * (distance_projection / ray_hit.distance);
-	int wall_top = (WINDOW_HEIGHT - ray_height) / 2;
-	int wall_bottom = wall_top + ray_height;
-	int color = ray_hit.hit ? 0xFF : 0x88;
-	draw_rect(NUM_RAYS * angle_diff / FOV_ANGLE, wall_top, 1, ray_height, color, color, color);
-}
-
-RayHit cast_ray(float ray_angle) {
-	RayHit hit = { .distance = 0, .hit = false };
-	hit.distance = 1000;
-	return hit;
-}
-
-void update() {
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderClear(renderer);
-	for (int i = 0; i < NUM_RAYS; i++) {
-		float ray_angle = player.angle - FOV_ANGLE / 2 + (FOV_ANGLE * i / NUM_RAYS);
-		RayHit ray_hit = cast_ray(ray_angle);
-		draw_ray(ray_angle, ray_hit);
-	}
-	SDL_RenderPresent(renderer);
-}
-
-int main() {
-	bool running = true;
-	SDL_Event event;
-	init();
-	while (running) {
-		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_QUIT) {
-				running = false;
-			}
-			if (event.type == SDL_KEYDOWN) {
-				switch (event.key.keysym.sym) {
-					case SDLK_LEFT:
-						player.angle -= M_PI / 30;
-						break;
-					case SDLK_RIGHT:
-						player.angle += M_PI / 30;
-						break;
-				}
-			}
+		if (rayDirX < 0)
+		{
+			stepX = -1;
+			sideDistX = (g->player.x / TILE_SIZE - mapX) * deltaDistX;
 		}
-		update();
-		SDL_Delay(16);
+		else
+		{
+			stepX = 1;
+			sideDistX = (mapX + 1.0 - g->player.x / TILE_SIZE) * deltaDistX;
+		}
+		if (rayDirY < 0)
+		{
+			stepY = -1;
+			sideDistY = (g->player.y / TILE_SIZE - mapY) * deltaDistY;
+		}
+		else
+		{
+			stepY = 1;
+			sideDistY = (mapY + 1.0 - g->player.y / TILE_SIZE) * deltaDistY;
+		}
+		while (hit == 0)
+		{
+			if (sideDistX < sideDistY)
+			{
+				sideDistX += deltaDistX;
+				mapX += stepX;
+				side = 0;
+			}
+			else
+			{
+				sideDistY += deltaDistY;
+				mapY += stepY;
+				side = 1;
+			}
+			if (worldMap[mapX][mapY] > 0)
+				hit = 1;
+		}
+
+		if (side == 0)
+			perpWallDist = (mapX - g->player.x / TILE_SIZE + (1 - stepX) / 2) / rayDirX;
+		else
+			perpWallDist = (mapY - g->player.y / TILE_SIZE + (1 - stepY) / 2) / rayDirY;
+
+		int lineHeight = (int)(WINDOW_HEIGHT / perpWallDist);
+
+		int drawStart = -lineHeight / 2 + WINDOW_HEIGHT / 2;
+		if (drawStart < 0)
+			drawStart = 0;
+		int drawEnd = lineHeight / 2 + WINDOW_HEIGHT / 2;
+		if (drawEnd >= WINDOW_HEIGHT)
+			drawEnd = WINDOW_HEIGHT - 1;
+
+		drawWalls(g, worldMap);
+
+		if (side == 0)
+			SDL_SetRenderDrawColor(g->renderer, 0xFF, 0x00, 0x00, 0xFF);
+		else
+			SDL_SetRenderDrawColor(g->renderer, 0x00, 0x00, 0xFF, 0xFF);
+
+		SDL_RenderDrawLine(g->renderer, x, drawStart, x, drawEnd);
 	}
-	destroy();
-	return 0;
 }
 
