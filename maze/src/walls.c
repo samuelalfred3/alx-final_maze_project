@@ -20,8 +20,7 @@ void drawWalls(Global *g, int worldMap[MAP_WIDTH][MAP_HEIGHT])
 				if (worldMap[x][y] == 1)
 				{
 					SDL_SetRenderDrawColor(g->renderer, 0xFF, 0x00, 0x00, 0xFF);
-				}
-				else if (worldMap[x][y] == 2)
+				} else if (worldMap[x][y] == 2)
 				{
 					SDL_SetRenderDrawColor(g->renderer, 0x00, 0x00, 0xFF, 0xFF);
 				}

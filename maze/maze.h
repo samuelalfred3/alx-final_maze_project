@@ -1,30 +1,24 @@
 #ifndef MAZE_H
 #define MAZE_H
 
-#include <stdbool.h>
 #include <SDL2/SDL.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
-#define FOV_ANGLE (60 * M_PI / 180)
-#define NUM_RAYS WINDOW_WIDTH
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
 #define TILE_SIZE 64
 #define MAP_WIDTH 24
-#define MAP_HEIGHT 7
+#define MAP_HEIGHT 24
+#define FOV_ANGLE (60 * (M_PI / 180))
 
 typedef struct
 {
-	float x;
-	float y;
-	float angle;
+	double x;
+	double y;
+	double angle;
 } Player;
-
-typedef struct
-{
-	float distance;
-	bool hit;
-} RayHit;
 
 typedef struct
 {
@@ -33,14 +27,10 @@ typedef struct
 	Player player;
 } Global;
 
-extern Global g;
-extern int worldMap[MAP_WIDTH][MAP_HEIGHT];
-
-/* Function prototypes */
-int init(void);
-void close(void);
-void performRaycasting(void);
-void drawWalls(Global *g, int worldMap[MAP_WIDTH][MAP_HEIGHT]);
+int init(Global *g);
+void close(Global *g);
+void performRaycasting(Global *g, int worldMap[MAP_WIDTH][MAP_HEIGHT]);
+void getWorldMap(int worldMap[MAP_WIDTH][MAP_HEIGHT]);
 
 #endif /* MAZE_H */
 

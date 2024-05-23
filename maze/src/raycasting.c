@@ -1,6 +1,6 @@
 #include "maze.h"
 
-void performRaycasting(Global *g)
+void performRaycasting(Global *g, int worldMap[MAP_WIDTH][MAP_HEIGHT])
 {
 	int x;
 	for (x = 0; x < WINDOW_WIDTH; x++)
@@ -76,8 +76,6 @@ void performRaycasting(Global *g)
 		int drawEnd = lineHeight / 2 + WINDOW_HEIGHT / 2;
 		if (drawEnd >= WINDOW_HEIGHT)
 			drawEnd = WINDOW_HEIGHT - 1;
-
-		drawWalls(g, worldMap);
 
 		if (side == 0)
 			SDL_SetRenderDrawColor(g->renderer, 0xFF, 0x00, 0x00, 0xFF);

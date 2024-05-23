@@ -5,16 +5,6 @@
 int init(Global *g);
 void close(Global *g);
 
-int worldMap[MAP_WIDTH][MAP_HEIGHT] = {
-	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-};
-
 int init(Global *g)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -22,7 +12,6 @@ int init(Global *g)
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 		return (0);
 	}
-
 	g->window = SDL_CreateWindow("Maze Project", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
 	if (g->window == NULL)
 	{
@@ -54,9 +43,10 @@ void close(Global *g)
 	SDL_Quit();
 }
 
-int main(int argc, char *args[])
+int main(void)
 {
 	Global g;
+	int worldMap[MAP_WIDTH][MAP_HEIGHT];
 
 	if (!init(&g))
 	{
@@ -65,6 +55,8 @@ int main(int argc, char *args[])
 	}
 	else
 	{
+		getWorldMap(worldMap);
+
 		int quit = 0;
 		SDL_Event e;
 
@@ -81,7 +73,7 @@ int main(int argc, char *args[])
 			SDL_SetRenderDrawColor(g.renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 			SDL_RenderClear(g.renderer);
 
-			performRaycasting(&g);
+			performRaycasting(&g, worldMap);
 
 			SDL_RenderPresent(g.renderer);
 		}
