@@ -2,6 +2,7 @@
 #include <SDL2/SDL_image.h>
 #include "graphics.h"
 #include "game.h"
+#include "config.h"
 
 /* Global texture variables */
 SDL_Texture *wallTexture = NULL;

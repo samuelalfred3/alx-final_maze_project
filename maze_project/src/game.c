@@ -1,5 +1,6 @@
 #include "game.h"
 #include "config.h"
+#include <math.h>
 
 /**
  * init_game - Initializes the game state.

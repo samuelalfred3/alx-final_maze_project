@@ -39,7 +39,8 @@ int main(void)
 		return (1);
 	}
 
-	init_game();
+	GameState state;
+	init_game(&state);
 
 	SDL_Event e;
 	int quit = 0;
@@ -52,13 +53,13 @@ int main(void)
 			{
 				quit = 1;
 			}
-			handle_input(&e);
+			handle_input(&e, &state);
 		}
 
-		update_game();
+		update_game(&state);
 
 		SDL_RenderClear(renderer);
-		render_game(renderer);
+		render_game(renderer, &state);
 		SDL_RenderPresent(renderer);
 	}
 
