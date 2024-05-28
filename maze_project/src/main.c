@@ -42,6 +42,9 @@ int main(void)
 	GameState state;
 	init_game(&state);
 
+	SDL_Texture *textures[NUM_TEXTURES];
+	load_textures(renderer, textures);
+
 	SDL_Event e;
 	int quit = 0;
 
@@ -59,11 +62,11 @@ int main(void)
 		update_game(&state);
 
 		SDL_RenderClear(renderer);
-		render_game(renderer, &state);
+		render_game(renderer, &state, textures);
 		SDL_RenderPresent(renderer);
 	}
 
-	clean_up();
+	clean_up_textures(textures);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	IMG_Quit();

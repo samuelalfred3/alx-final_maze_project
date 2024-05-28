@@ -13,6 +13,9 @@
 #define MOVE_SPEED 0.05
 #define ROT_SPEED 0.03
 
+/* Number of textures */
+#define NUM_TEXTURES 6
+
 /* Map representation (use a smaller map for simplicity) */
 extern const char map[MAP_HEIGHT][MAP_WIDTH + 1];
 
