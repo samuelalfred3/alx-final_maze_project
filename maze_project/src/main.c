@@ -1,43 +1,23 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include "config.h"
+#include <SDL.h>
+#include <SDL_image.h>
 #include "game.h"
 #include "graphics.h"
 #include "input.h"
+#include "config.h"
 
-int main(void)
+int main(int argc, char *argv[])
 {
-	if (SDL_Init(SDL_INIT_VIDEO) != 0)
+	SDL_Init(SDL_INIT_VIDEO);
+
+	/* Initialize SDL_image with PNG support */
+	if (IMG_Init(IMG_INIT_PNG) == 0)
 	{
-		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+		SDL_Log("Failed to initialize SDL_image: %s", IMG_GetError());
 		return (1);
 	}
 
 	SDL_Window *window = create_window();
-	if (!window)
-	{
-		SDL_Log("Failed to create window: %s", SDL_GetError());
-		SDL_Quit();
-		return (1);
-	}
-
 	SDL_Renderer *renderer = create_renderer(window);
-	if (!renderer)
-	{
-		SDL_Log("Failed to create renderer: %s", SDL_GetError());
-		SDL_DestroyWindow(window);
-		SDL_Quit();
-		return (1);
-	}
-
-	if (IMG_Init(IMG_INIT_PNG) == 0)
-	{
-		SDL_Log("Failed to initialize SDL_image: %s", SDL_GetError());
-		SDL_DestroyRenderer(renderer);
-		SDL_DestroyWindow(window);
-		SDL_Quit();
-		return (1);
-	}
 
 	GameState state;
 	init_game(&state);
@@ -45,30 +25,27 @@ int main(void)
 	SDL_Texture *textures[NUM_TEXTURES];
 	load_textures(renderer, textures);
 
-	SDL_Event e;
-	int quit = 0;
-
-	while (!quit)
+	int running = 1;
+	while (running)
 	{
-		while (SDL_PollEvent(&e))
+		SDL_Event event;
+		while (SDL_PollEvent(&event))
 		{
-			if (e.type == SDL_QUIT)
+			if (event.type == SDL_QUIT)
 			{
-				quit = 1;
+				running = 0;
 			}
-			handle_input(&e, &state);
+			handle_input(&state, &event);
 		}
 
 		update_game(&state);
-
-		SDL_RenderClear(renderer);
 		render_game(renderer, &state, textures);
-		SDL_RenderPresent(renderer);
 	}
 
 	clean_up_textures(textures);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+
 	IMG_Quit();
 	SDL_Quit();
 

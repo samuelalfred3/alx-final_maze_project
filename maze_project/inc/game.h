@@ -1,20 +1,20 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <SDL.h>
+#include "config.h"
+
 typedef struct
 {
-	double playerPosX;
-	double playerPosY;
-	double playerDirX;
-	double playerDirY;
-	double planeX;
-	double planeY;
-	double player_angle;
+	double playerPosX, playerPosY;   /* Player's position */
+	double playerDirX, playerDirY;   /* Player's direction */
+	double planeX, planeY;           /* Camera plane */
+	int moveForward, moveBackward;   /* Movement flags */
+	int rotateLeft, rotateRight;     /* Rotation flags */
 } GameState;
 
 void init_game(GameState *state);
 void update_game(GameState *state);
-void clean_up(void);
 
 #endif /* GAME_H */
 
