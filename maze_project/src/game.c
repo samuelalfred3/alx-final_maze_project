@@ -1,8 +1,11 @@
-#include "game.h"
-#include "config.h"
+#include "../inc/game.h"
+#include "../inc/config.h"
 #include <math.h>
 
-/* Initialize game state */
+/**
+ * init_game - Initialize game state.
+ * @state: Pointer to the game state structure.
+ */
 void init_game(GameState *state)
 {
 	state->playerPosX = 2.0;
@@ -17,7 +20,10 @@ void init_game(GameState *state)
 	state->rotateRight = 0;
 }
 
-/* Update game state based on input */
+/**
+ * update_game - Update game state based on input.
+ * @state: Pointer to the game state structure.
+ */
 void update_game(GameState *state)
 {
 	double moveSpeed = 0.05;

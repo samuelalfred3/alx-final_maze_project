@@ -1,7 +1,12 @@
 #include <SDL.h>
-#include "input.h"
+#include "../inc/input.h"
+#include "../inc/game.h"
 
-/* Handle keyboard input */
+/**
+ * handle_input - Handle keyboard input.
+ * @state: Pointer to the game state structure.
+ * @event: Pointer to the SDL event structure.
+ */
 void handle_input(GameState *state, SDL_Event *event)
 {
 	if (event->type == SDL_KEYDOWN)

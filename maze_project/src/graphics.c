@@ -1,21 +1,37 @@
 #include <math.h>
 #include <SDL.h>
 #include <SDL_image.h>
-#include "graphics.h"
-#include "game.h"
-#include "config.h"
+#include "../inc/graphics.h"
+#include "../inc/game.h"
+#include "../inc/config.h"
+#include "../inc/textures.h"
 
+/**
+ * create_window - Create SDL window.
+ * Return: SDL_Window pointer.
+ */
 SDL_Window *create_window(void)
 {
 	return SDL_CreateWindow("Maze Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 }
 
+/**
+ * create_renderer - Create SDL renderer.
+ * @window: Pointer to the SDL window.
+ * Return: SDL_Renderer pointer.
+ */
 SDL_Renderer *create_renderer(SDL_Window *window)
 {
 	return SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 }
 
-void load_textures(SDL_Renderer *renderer, SDL_Texture **textures)
+/**
+ * load_textures - Load textures from files.
+ * @renderer: Pointer to the SDL renderer.
+ * @textures: Array of SDL_Texture pointers.
+ * Return: 1 on success, 0 on failure.
+ */
+int load_textures(SDL_Renderer *renderer, SDL_Texture **textures)
 {
 	textures[0] = IMG_LoadTexture(renderer, "assets/textures/wall.png");
 	textures[1] = IMG_LoadTexture(renderer, "assets/textures/ground.png");
@@ -24,9 +40,18 @@ void load_textures(SDL_Renderer *renderer, SDL_Texture **textures)
 	if (!textures[0] || !textures[1] || !textures[2])
 	{
 		SDL_Log("Failed to load textures: %s", SDL_GetError());
+		return (0);
 	}
+
+	return (1);
 }
 
+/**
+ * render_game - Render the game.
+ * @renderer: Pointer to the SDL renderer.
+ * @state: Pointer to the game state structure.
+ * @textures: Array of SDL_Texture pointers.
+ */
 void render_game(SDL_Renderer *renderer, GameState *state, SDL_Texture **textures)
 {
 	SDL_RenderClear(renderer);
@@ -37,6 +62,12 @@ void render_game(SDL_Renderer *renderer, GameState *state, SDL_Texture **texture
 	SDL_RenderPresent(renderer);
 }
 
+/**
+ * draw_walls - Draw the walls in the game.
+ * @renderer: Pointer to the SDL renderer.
+ * @state: Pointer to the game state structure.
+ * @wallTexture: Pointer to the wall texture.
+ */
 void draw_walls(SDL_Renderer *renderer, GameState *state, SDL_Texture *wallTexture)
 {
 	for (int x = 0; x < SCREEN_WIDTH; x++)
@@ -114,6 +145,12 @@ void draw_walls(SDL_Renderer *renderer, GameState *state, SDL_Texture *wallTextu
 	}
 }
 
+/**
+ * draw_floor_and_ceiling - Draw the floor and ceiling.
+ * @renderer: Pointer to the SDL renderer.
+ * @groundTexture: Pointer to the ground texture.
+ * @ceilingTexture: Pointer to the ceiling texture.
+ */
 void draw_floor_and_ceiling(SDL_Renderer *renderer, SDL_Texture *groundTexture, SDL_Texture *ceilingTexture)
 {
 	SDL_Rect floorRect = {0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
@@ -123,6 +160,10 @@ void draw_floor_and_ceiling(SDL_Renderer *renderer, SDL_Texture *groundTexture, 
 	SDL_RenderCopy(renderer, ceilingTexture, NULL, &ceilingRect);
 }
 
+/**
+ * clean_up_textures - Clean up and destroy textures.
+ * @textures: Array of SDL_Texture pointers.
+ */
 void clean_up_textures(SDL_Texture **textures)
 {
 	for (int i = 0; i < NUM_TEXTURES; i++)

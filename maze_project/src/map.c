@@ -1,9 +1,14 @@
 #include <stdio.h>
 #include <string.h>
-#include "config.h"
+#include "../inc/config.h"
+#include "../inc/game.h"
 
 char map[MAP_HEIGHT][MAP_WIDTH + 1];
 
+/**
+ * load_map - Load the map from a file.
+ * @filename: The name of the file containing the map.
+ */
 void load_map(const char *filename)
 {
 	FILE *file = fopen(filename, "r");
