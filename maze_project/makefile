@@ -1,25 +1,15 @@
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra -pedantic
-LDFLAGS = -lSDL2 -lSDL2_image -lm
-INCLUDES = -I inc -I /usr/include/SDL2
+LIBS = -lSDL2 -lSDL2_image -lm
 
-SRCDIR = src
-INCDIR = inc
+SRCS = src/game.c src/input.c src/main.c src/map.c src/graphics.c src/textures.c
+OBJS = $(SRCS:.c=.o)
 
-SOURCES = $(wildcard $(SRCDIR)/*.c)
-OBJECTS = $(SOURCES:.c=.o)
-EXECUTABLE = Maze
+INC_DIRS = -I inc -I /usr/include/SDL2
 
-.PHONY: all clean
-
-all: $(EXECUTABLE)
-
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o $@ $(LDFLAGS)
-
-%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+Maze: $(OBJS)
+	$(CC) $(CFLAGS) $(INC_DIRS) $(OBJS) -o $@ $(LIBS)
 
 clean:
-	rm -f $(EXECUTABLE) $(OBJECTS)
+	rm -f $(OBJS) Maze
 

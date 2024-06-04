@@ -3,9 +3,9 @@
 #include "../inc/game.h"
 
 static const char *textureFileNames[NUM_TEXTURES] = {
-	"assets/textures/wall.png",
-	"assets/textures/ground.png",
-	"assets/textures/ceiling.png"
+    "assets/textures/wall.png",
+    "assets/textures/ground.png",
+    "assets/textures/ceiling.png"
 };
 
 /**

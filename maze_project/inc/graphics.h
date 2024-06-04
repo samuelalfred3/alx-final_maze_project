@@ -6,7 +6,6 @@
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
-#define NUM_TEXTURES 3
 
 /* Function prototypes for graphics */
 SDL_Window *create_window(void);
