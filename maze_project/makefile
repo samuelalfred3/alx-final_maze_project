@@ -7,8 +7,12 @@ OBJS = $(SRCS:.c=.o)
 
 INC_DIRS = -I inc -I /usr/include/SDL2
 
-Maze: $(OBJS)
-	$(CC) $(CFLAGS) $(INC_DIRS) $(OBJS) -o $@ $(LIBS)
+Maze: $(SRCS)
+	$(CC) $(CFLAGS) $(INC_DIRS) $^ -o $@ $(LIBS)
+	@$(MAKE) clean_objects
+
+clean_objects:
+	rm -f $(OBJS)
 
 clean:
 	rm -f $(OBJS) Maze

@@ -26,27 +26,6 @@ SDL_Renderer *create_renderer(SDL_Window *window)
 }
 
 /**
- * load_textures - Load textures from files.
- * @renderer: Pointer to the SDL renderer.
- * @textures: Array of SDL_Texture pointers.
- * Return: 1 on success, 0 on failure.
- */
-int load_textures(SDL_Renderer *renderer, SDL_Texture **textures)
-{
-	textures[0] = IMG_LoadTexture(renderer, "assets/textures/wall.png");
-	textures[1] = IMG_LoadTexture(renderer, "assets/textures/ground.png");
-	textures[2] = IMG_LoadTexture(renderer, "assets/textures/ceiling.png");
-
-	if (!textures[0] || !textures[1] || !textures[2])
-	{
-		SDL_Log("Failed to load textures: %s", SDL_GetError());
-		return (0);
-	}
-
-	return (1);
-}
-
-/**
  * render_game - Render the game.
  * @renderer: Pointer to the SDL renderer.
  * @state: Pointer to the game state structure.

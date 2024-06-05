@@ -3,9 +3,9 @@
 #include "../inc/game.h"
 
 static const char *textureFileNames[NUM_TEXTURES] = {
-    "assets/textures/wall.png",
-    "assets/textures/ground.png",
-    "assets/textures/ceiling.png"
+	"assets/textures/wall.png",
+	"assets/textures/ground.png",
+	"assets/textures/ceiling.png"
 };
 
 /**
@@ -32,14 +32,14 @@ int load_textures(SDL_Renderer *renderer, SDL_Texture **textures)
 		{
 			SDL_Log("Error creating texture from %s: %s\n", textureFileNames[i], SDL_GetError());
 			SDL_FreeSurface(surface);
-			return (0);  /* Return 0 on failure */
+			return 0;  /* Return 0 on failure */
 		}
 
 		/* Free surface since texture is created */
 		SDL_FreeSurface(surface);
 	}
 
-	return (1);  /* Return 1 on success */
+	return 1;  /* Return 1 on success */
 }
 
 void free_textures(SDL_Texture **textures)
