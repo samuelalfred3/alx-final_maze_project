@@ -1,71 +1,96 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "../inc/game.h"
-#include "../inc/graphics.h"
+#include "../inc/window.h"
 #include "../inc/config.h"
-#include "../inc/input.h"
+#include "../inc/graphics.h"
 #include "../inc/textures.h"
+#include "../inc/map.h"
 
 int main(int argc, char *argv[])
 {
-	(void)argc;
-	(void)argv;
-
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-	{
-		SDL_Log("Failed to initialize SDL: %s", SDL_GetError());
-		return (1);
-	}
-
-	/* Initialize SDL_image with PNG support */
-	if (IMG_Init(IMG_INIT_PNG) == 0)
-	{
-		SDL_Log("Failed to initialize SDL_image: %s", IMG_GetError());
-		SDL_Quit();
-		return (1);
-	}
-
-	SDL_Window *window = create_window();
-	SDL_Renderer *renderer = create_renderer(window);
-
 	GameState state;
+	SDL_Texture *textures[NUM_TEXTURES];
+
+	if (!initializeWindow())
+	{
+		fprintf(stderr, "Failed to initialize window.\n");
+		return (1);
+	}
+
 	init_game(&state);
 
-	SDL_Texture * textures[NUM_TEXTURES];
-	if (!load_textures(renderer, textures))
+	/* Load textures */
+	textures[0] = load_texture(renderer, "assets/textures/wall.png");
+	if (!textures[0])
 	{
-		SDL_Log("Failed to load textures");
-		SDL_DestroyRenderer(renderer);
-		SDL_DestroyWindow(window);
-		IMG_Quit();
-		SDL_Quit();
+		fprintf(stderr, "Failed to load wall texture\n");
+		destroyWindow();
+		return (1);
+	}
+	textures[1] = load_texture(renderer, "assets/textures/floor.png");
+	if (!textures[1])
+	{
+		fprintf(stderr, "Failed to load floor texture\n");
+		destroyWindow();
+		return (1);
+	}
+	textures[2] = load_texture(renderer, "assets/textures/ceiling.png");
+	if (!textures[2])
+	{
+		fprintf(stderr, "Failed to load ceiling texture\n");
+		destroyWindow();
 		return (1);
 	}
 
-	int running = 1;
-	while (running)
+	SDL_Event e;
+	int quit = 0;
+
+	while (!quit)
 	{
-		SDL_Event event;
-		while (SDL_PollEvent(&event))
+		while (SDL_PollEvent(&e) != 0)
 		{
-			if (event.type == SDL_QUIT)
+			if (e.type == SDL_QUIT)
 			{
-				running = 0;
+				quit = 1;
+			} else if (e.type == SDL_KEYDOWN) {
+				switch (e.key.keysym.sym) {
+					case SDLK_w:
+						state.moveForward = 1;
+						break;
+					case SDLK_s:
+						state.moveBackward = 1;
+						break;
+					case SDLK_a:
+						state.rotateLeft = 1;
+						break;
+					case SDLK_d:
+						state.rotateRight = 1;
+						break;
+				}
+			} else if (e.type == SDL_KEYUP) {
+				switch (e.key.keysym.sym) {
+					case SDLK_w:
+						state.moveForward = 0;
+						break;
+					case SDLK_s:
+						state.moveBackward = 0;
+						break;
+					case SDLK_a:
+						state.rotateLeft = 0;
+						break;
+					case SDLK_d:
+						state.rotateRight = 0;
+						break;
+				}
 			}
-			handle_input(&state, &event);
 		}
 
 		update_game(&state);
 		render_game(renderer, &state, textures);
 	}
 
-	free_textures(textures);
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-
-	IMG_Quit();
-	SDL_Quit();
-
+	destroyWindow();
 	return (0);
 }
 

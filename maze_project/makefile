@@ -1,19 +1,45 @@
+# Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra -pedantic
-LIBS = -lSDL2 -lSDL2_image -lm
+CFLAGS = -Wall -Wextra -Werror -pedantic -std=c99
 
-SRCS = src/game.c src/input.c src/main.c src/map.c src/graphics.c src/textures.c
-OBJS = $(SRCS:.c=.o)
+# Directories
+SRC_DIR = src
+INC_DIR = inc
+OBJ_DIR = obj
 
-INC_DIRS = -I inc -I /usr/include/SDL2
+# Source files
+SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
+OBJ_FILES = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
 
-Maze: $(SRCS)
-	$(CC) $(CFLAGS) $(INC_DIRS) $^ -o $@ $(LIBS)
-	@$(MAKE) clean_objects
+# Output executable
+TARGET = raycasting_game
 
-clean_objects:
-	rm -f $(OBJS)
+# Libraries
+SDL_LIB = -lSDL2 -lSDL2_image
 
+# Make sure the obj directory exists
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
+
+# Main target
+all: $(OBJ_DIR) $(TARGET)
+
+# Compile the target
+$(TARGET): $(OBJ_FILES)
+	$(CC) $(CFLAGS) -o $@ $^ $(SDL_LIB)
+
+# Compile object files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC_DIR)/*.h
+	$(CC) $(CFLAGS) -I$(INC_DIR) -c $< -o $@
+
+# Clean up
 clean:
-	rm -f $(OBJS) Maze
+	rm -rf $(OBJ_DIR)
+	rm -f $(TARGET)
+
+# Rebuild
+rebuild: clean all
+
+# Phony targets
+.PHONY: all clean rebuild
 

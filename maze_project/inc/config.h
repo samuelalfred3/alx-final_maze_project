@@ -1,8 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define MAP_WIDTH 10
-#define MAP_HEIGHT 9
+#define MAP_WIDTH 20
+#define MAP_HEIGHT 13
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 

@@ -1,4 +1,4 @@
-#include "weapons.h"
+#include "../inc/weapons.h"
 #include <SDL_image.h>
 #include "../inc/game.h"
 
@@ -38,7 +38,10 @@ void freeWeapons(Weapon *weapons)
 {
 	for (int i = 0; i < NUM_WEAPONS; i++)
 	{
-		SDL_DestroyTexture(weapons[i].texture);
+		if (weapons[i].texture != NULL) {
+			SDL_DestroyTexture(weapons[i].texture);
+			weapons[i].texture = NULL;
+		}
 	}
 }
 

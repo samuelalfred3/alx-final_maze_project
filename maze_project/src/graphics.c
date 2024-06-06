@@ -5,6 +5,7 @@
 #include "../inc/game.h"
 #include "../inc/config.h"
 #include "../inc/textures.h"
+#include "../inc/map.h"
 
 /**
  * create_window - Create SDL window.
@@ -106,7 +107,7 @@ void draw_walls(SDL_Renderer *renderer, GameState *state, SDL_Texture *wallTextu
 				mapY += stepY;
 				side = 1;
 			}
-			if (map[mapY][mapX] == '#') hit = 1;
+			if (get_map_value(mapX, mapY) > '0') hit = 1;
 		}
 
 		if (side == 0) perpWallDist = (mapX - state->playerPosX + (1 - stepX) / 2) / rayDirX;
@@ -120,37 +121,23 @@ void draw_walls(SDL_Renderer *renderer, GameState *state, SDL_Texture *wallTextu
 		if (drawEnd >= SCREEN_HEIGHT) drawEnd = SCREEN_HEIGHT - 1;
 
 		SDL_Rect wallRect = {x, drawStart, 1, drawEnd - drawStart};
+
 		SDL_RenderCopy(renderer, wallTexture, NULL, &wallRect);
 	}
 }
 
 /**
- * draw_floor_and_ceiling - Draw the floor and ceiling.
+ * draw_floor_and_ceiling - Draw the floor and ceiling in the game.
  * @renderer: Pointer to the SDL renderer.
- * @groundTexture: Pointer to the ground texture.
+ * @floorTexture: Pointer to the floor texture.
  * @ceilingTexture: Pointer to the ceiling texture.
  */
-void draw_floor_and_ceiling(SDL_Renderer *renderer, SDL_Texture *groundTexture, SDL_Texture *ceilingTexture)
+void draw_floor_and_ceiling(SDL_Renderer *renderer, SDL_Texture *floorTexture, SDL_Texture *ceilingTexture)
 {
 	SDL_Rect floorRect = {0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
-	SDL_RenderCopy(renderer, groundTexture, NULL, &floorRect);
-
 	SDL_Rect ceilingRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
-	SDL_RenderCopy(renderer, ceilingTexture, NULL, &ceilingRect);
-}
 
-/**
- * clean_up_textures - Clean up and destroy textures.
- * @textures: Array of SDL_Texture pointers.
- */
-void clean_up_textures(SDL_Texture **textures)
-{
-	for (int i = 0; i < NUM_TEXTURES; i++)
-	{
-		if (textures[i])
-		{
-			SDL_DestroyTexture(textures[i]);
-		}
-	}
+	SDL_RenderCopy(renderer, ceilingTexture, NULL, &ceilingRect);
+	SDL_RenderCopy(renderer, floorTexture, NULL, &floorRect);
 }
 

@@ -1,6 +1,7 @@
 #include "../inc/game.h"
 #include "../inc/config.h"
 #include <math.h>
+#include "../inc/map.h"
 
 /**
  * init_game - Initialize game state.
@@ -31,16 +32,16 @@ void update_game(GameState *state)
 
 	if (state->moveForward)
 	{
-		if (map[(int)(state->playerPosX + state->playerDirX * moveSpeed)][(int)state->playerPosY] == '.')
+		if (get_map_value((int)(state->playerPosX + state->playerDirX * moveSpeed), (int)state->playerPosY) == '0')
 			state->playerPosX += state->playerDirX * moveSpeed;
-		if (map[(int)state->playerPosX][(int)(state->playerPosY + state->playerDirY * moveSpeed)] == '.')
+		if (get_map_value((int)state->playerPosX, (int)(state->playerPosY + state->playerDirY * moveSpeed)) == '0')
 			state->playerPosY += state->playerDirY * moveSpeed;
 	}
 	if (state->moveBackward)
 	{
-		if (map[(int)(state->playerPosX - state->playerDirX * moveSpeed)][(int)state->playerPosY] == '.')
+		if (get_map_value((int)(state->playerPosX - state->playerDirX * moveSpeed), (int)state->playerPosY) == '0')
 			state->playerPosX -= state->playerDirX * moveSpeed;
-		if (map[(int)state->playerPosX][(int)(state->playerPosY - state->playerDirY * moveSpeed)] == '.')
+		if (get_map_value((int)state->playerPosX, (int)(state->playerPosY - state->playerDirY * moveSpeed)) == '0')
 			state->playerPosY -= state->playerDirY * moveSpeed;
 	}
 	if (state->rotateLeft)
