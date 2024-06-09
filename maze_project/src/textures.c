@@ -1,42 +1,55 @@
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include "../inc/textures.h"
-#include "../inc/config.h"
+
+extern SDL_Renderer* renderer;
+SDL_Texture* wallTextures[4];
 
 /**
- * load_textures - Load textures.
- * @renderer: Pointer to the SDL renderer.
- * @textures: Array of SDL_Texture pointers.
- * Return: 1 on success, 0 on failure.
+ * WallTexturesready - Loads wall textures into the wallTextures array.
  */
-int load_textures(SDL_Renderer *renderer, SDL_Texture **textures)
+void WallTexturesready()
 {
-	textures[0] = IMG_LoadTexture(renderer, "assets/textures/wall.png");
-	textures[1] = IMG_LoadTexture(renderer, "assets/textures/ground.png");
-	textures[2] = IMG_LoadTexture(renderer, "assets/textures/ceiling.png");
-
-	for (int i = 0; i < NUM_TEXTURES; i++)
-	{
-		if (textures[i] == NULL)
-		{
-			SDL_Log("Failed to load texture %d: %s", i, IMG_GetError());
-			return (0);
-		}
-	}
-	return (1);
+	wallTextures[0] = loadTexture("images/wall.png");
+	wallTextures[1] = loadTexture("images/ground.png");
+	wallTextures[2] = loadTexture("images/ceiling.png");
+	wallTextures[3] = loadTexture("images/character.png");
 }
 
 /**
- * free_textures - Free textures.
- * @textures: Array of SDL_Texture pointers.
+ * loadTexture - Loads an image file as an SDL texture.
+ * @file: Path to the image file.
+ *
+ * Return: Pointer to the SDL texture, or NULL on failure.
  */
-void free_textures(SDL_Texture **textures)
+SDL_Texture* loadTexture(const char* file)
 {
-	for (int i = 0; i < NUM_TEXTURES; i++)
+	SDL_Surface* surface = IMG_Load(file);
+	if (!surface)
 	{
-		if (textures[i])
+		fprintf(stderr, "Error creating SDL surface: %s\n", SDL_GetError());
+		return (NULL);
+	}
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+	SDL_FreeSurface(surface);
+	if (!texture)
+	{
+		fprintf(stderr, "Error creating SDL texture: %s\n", SDL_GetError());
+	}
+	return (texture);
+}
+
+/**
+ * freeWallTextures - Frees all loaded wall textures.
+ */
+void freeWallTextures()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		if (wallTextures[i])
 		{
-			SDL_DestroyTexture(textures[i]);
+			SDL_DestroyTexture(wallTextures[i]);
+			wallTextures[i] = NULL;
 		}
 	}
 }

@@ -1,27 +1,14 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <SDL.h>
+#include <stdbool.h>
 
-/* Define the GameState structure */
-typedef struct
-{
-	double playerPosX;
-	double playerPosY;
-	double playerDirX;
-	double playerDirY;
-	double planeX;
-	double planeY;
-	int moveForward;
-	int moveBackward;
-	int rotateLeft;
-	int rotateRight;
-} GameState;
+extern bool GameRunning;
+extern int TicksLastFrame;
 
-/* Function prototypes */
-void handle_input(GameState *state, SDL_Event *event);
-void init_game(GameState *state);
-void update_game(GameState *state);
+void setup_game(void);
+void update_game(void);
+void render_game(void);
 
-#endif /* GAME_H */
+#endif
 

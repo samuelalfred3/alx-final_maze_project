@@ -1,143 +1,169 @@
-#include <math.h>
-#include <SDL.h>
-#include <SDL_image.h>
-#include "../inc/graphics.h"
 #include "../inc/game.h"
-#include "../inc/config.h"
-#include "../inc/textures.h"
+#include "../inc/upng.h"
+#include "../inc/graphics.h"
 #include "../inc/map.h"
+#include "../inc/textures.h"
+#include "../inc/window.h"
+#include "../inc/ray.h"
+#include "../inc/player.h"
+#include "../inc/config.h"
+#include <SDL2/SDL.h>
+#include <stdlib.h>
+
+SDL_Renderer *renderer;
+static color_t *colorBuffer;
+static SDL_Texture *colorBufferTexture;
+static SDL_Window *window;
 
 /**
- * create_window - Create SDL window.
- * Return: SDL_Window pointer.
+ * initializeWindow - Initializes the SDL window and renderer.
+ *
+ * Return: true on success, false on failure.
  */
-SDL_Window *create_window(void)
+bool initializeWindow(void)
 {
-	return SDL_CreateWindow("Maze Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-}
+	SDL_DisplayMode display_mode;
+	int fullScreenWidth, fullScreenHeight;
 
-/**
- * create_renderer - Create SDL renderer.
- * @window: Pointer to the SDL window.
- * Return: SDL_Renderer pointer.
- */
-SDL_Renderer *create_renderer(SDL_Window *window)
-{
-	return SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-}
-
-/**
- * render_game - Render the game.
- * @renderer: Pointer to the SDL renderer.
- * @state: Pointer to the game state structure.
- * @textures: Array of SDL_Texture pointers.
- */
-void render_game(SDL_Renderer *renderer, GameState *state, SDL_Texture **textures)
-{
-	SDL_RenderClear(renderer);
-
-	draw_walls(renderer, state, textures[0]);
-	draw_floor_and_ceiling(renderer, textures[1], textures[2]);
-
-	SDL_RenderPresent(renderer);
-}
-
-/**
- * draw_walls - Draw the walls in the game.
- * @renderer: Pointer to the SDL renderer.
- * @state: Pointer to the game state structure.
- * @wallTexture: Pointer to the wall texture.
- */
-void draw_walls(SDL_Renderer *renderer, GameState *state, SDL_Texture *wallTexture)
-{
-	for (int x = 0; x < SCREEN_WIDTH; x++)
+	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
-		double cameraX = 2 * x / (double)SCREEN_WIDTH - 1;
-		double rayDirX = state->playerDirX + state->planeX * cameraX;
-		double rayDirY = state->playerDirY + state->planeY * cameraX;
+		fprintf(stderr, "Error initializing SDL.\n");
+		return (false);
+	}
+	SDL_GetCurrentDisplayMode(0, &display_mode);
+	fullScreenWidth = display_mode.w;
+	fullScreenHeight = display_mode.h;
+	window = SDL_CreateWindow(
+			NULL,
+			SDL_WINDOWPOS_CENTERED,
+			SDL_WINDOWPOS_CENTERED,
+			fullScreenWidth,
+			fullScreenHeight,
+			SDL_WINDOW_BORDERLESS
+			);
+	if (!window)
+	{
+		fprintf(stderr, "Error creating SDL window.\n");
+		return (false);
+	}
+	renderer = SDL_CreateRenderer(window, -1, 0);
+	if (!renderer)
+	{
+		fprintf(stderr, "Error creating SDL renderer.\n");
+		return (false);
+	}
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+	colorBuffer = (color_t*)malloc(sizeof(color_t) * fullScreenWidth * fullScreenHeight);
+	colorBufferTexture = SDL_CreateTexture(
+			renderer,
+			SDL_PIXELFORMAT_ARGB8888,
+			SDL_TEXTUREACCESS_STREAMING,
+			fullScreenWidth,
+			fullScreenHeight
+			);
+	return (true);
+}
 
-		int mapX = (int)state->playerPosX;
-		int mapY = (int)state->playerPosY;
+/**
+ * destroyWindow - Cleans up and destroys the SDL window and renderer.
+ */
+void destroyWindow(void)
+{
+	free(colorBuffer);
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
+}
 
-		double sideDistX;
-		double sideDistY;
-
-		double deltaDistX = fabs(1 / rayDirX);
-		double deltaDistY = fabs(1 / rayDirY);
-		double perpWallDist;
-
-		int stepX;
-		int stepY;
-
-		int hit = 0;
-		int side;
-
-		if (rayDirX < 0)
-		{
-			stepX = -1;
-			sideDistX = (state->playerPosX - mapX) * deltaDistX;
-		}
-		else
-		{
-			stepX = 1;
-			sideDistX = (mapX + 1.0 - state->playerPosX) * deltaDistX;
-		}
-		if (rayDirY < 0)
-		{
-			stepY = -1;
-			sideDistY = (state->playerPosY - mapY) * deltaDistY;
-		}
-		else
-		{
-			stepY = 1;
-			sideDistY = (mapY + 1.0 - state->playerPosY) * deltaDistY;
-		}
-
-		while (hit == 0)
-		{
-			if (sideDistX < sideDistY)
-			{
-				sideDistX += deltaDistX;
-				mapX += stepX;
-				side = 0;
-			}
-			else
-			{
-				sideDistY += deltaDistY;
-				mapY += stepY;
-				side = 1;
-			}
-			if (get_map_value(mapX, mapY) > '0') hit = 1;
-		}
-
-		if (side == 0) perpWallDist = (mapX - state->playerPosX + (1 - stepX) / 2) / rayDirX;
-		else perpWallDist = (mapY - state->playerPosY + (1 - stepY) / 2) / rayDirY;
-
-		int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
-
-		int drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
-		if (drawStart < 0) drawStart = 0;
-		int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
-		if (drawEnd >= SCREEN_HEIGHT) drawEnd = SCREEN_HEIGHT - 1;
-
-		SDL_Rect wallRect = {x, drawStart, 1, drawEnd - drawStart};
-
-		SDL_RenderCopy(renderer, wallTexture, NULL, &wallRect);
+/**
+ * clearColorBuffer - Clears the color buffer with a given color.
+ * @color: Color to clear the buffer with.
+ */
+void clearColorBuffer(color_t color)
+{
+	for (int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++)
+	{
+		colorBuffer[i] = color;
 	}
 }
 
 /**
- * draw_floor_and_ceiling - Draw the floor and ceiling in the game.
- * @renderer: Pointer to the SDL renderer.
- * @floorTexture: Pointer to the floor texture.
- * @ceilingTexture: Pointer to the ceiling texture.
+ * renderColorBuffer - Renders the color buffer to the screen.
  */
-void draw_floor_and_ceiling(SDL_Renderer *renderer, SDL_Texture *floorTexture, SDL_Texture *ceilingTexture)
+void renderColorBuffer(void)
 {
-	SDL_Rect floorRect = {0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
-	SDL_Rect ceilingRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
+	SDL_UpdateTexture(
+			colorBufferTexture,
+			NULL,
+			colorBuffer,
+			SCREEN_WIDTH * sizeof(color_t)
+			);
+	SDL_RenderCopy(renderer, colorBufferTexture, NULL, NULL);
+	SDL_RenderPresent(renderer);
+}
 
-	SDL_RenderCopy(renderer, ceilingTexture, NULL, &ceilingRect);
-	SDL_RenderCopy(renderer, floorTexture, NULL, &floorRect);
+/**
+ * drawPixel - Draws a pixel on the screen at (x, y) with a given color.
+ * @x: The x-coordinate of the pixel.
+ * @y: The y-coordinate of the pixel.
+ * @color: The color of the pixel.
+ */
+void drawPixel(int x, int y, color_t color)
+{
+	if (x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT)
+	{
+		colorBuffer[(SCREEN_WIDTH * y) + x] = color;
+	}
+}
+
+/**
+ * drawLine - Draws a line from (x0, y0) to (x1, y1) with a given color.
+ * @x0: The starting x-coordinate.
+ * @y0: The starting y-coordinate.
+ * @x1: The ending x-coordinate.
+ * @y1: The ending y-coordinate.
+ * @color: The color of the line.
+ */
+void drawLine(int x0, int y0, int x1, int y1, color_t color)
+{
+	int deltaX = (x1 - x0);
+	int deltaY = (y1 - y0);
+
+	int longestSideLength = (abs(deltaX) >= abs(deltaY)) ? abs(deltaX) : abs(deltaY);
+
+	float xIncrement = deltaX / (float)longestSideLength;
+	float yIncrement = deltaY / (float)longestSideLength;
+
+	float currentX = x0;
+	float currentY = y0;
+
+	for (int i = 0; i <= longestSideLength; i++)
+	{
+		drawPixel(round(currentX), round(currentY), color);
+		currentX += xIncrement;
+		currentY += yIncrement;
+	}
+}
+
+/**
+ * renderWall - Renders the walls based on the ray casting results.
+ */
+void renderWall(void)
+{
+	for (int i = 0; i < NUM_RAYS; i++)
+	{
+		int wallStripHeight = (TILE_SIZE / rays[i].distance) * DIST_PROJ_PLANE;
+
+		int wallTopPixel = (SCREEN_HEIGHT / 2) - (wallStripHeight / 2);
+		wallTopPixel = wallTopPixel < 0 ? 0 : wallTopPixel;
+
+		int wallBottomPixel = (SCREEN_HEIGHT / 2) + (wallStripHeight / 2);
+		wallBottomPixel = wallBottomPixel > SCREEN_HEIGHT ? SCREEN_HEIGHT : wallBottomPixel;
+
+		for (int y = wallTopPixel; y < wallBottomPixel; y++)
+		{
+			drawPixel(i, y, rays[i].wallHitContent);
+		}
+	}
 }
 

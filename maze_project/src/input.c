@@ -1,60 +1,42 @@
 #include "../inc/input.h"
 #include "../inc/game.h"
+#include "../inc/player.h"
+#include <SDL2/SDL.h>
 
 /**
- * handle_input - Handle user input and update game state accordingly.
- * @state: Pointer to the game state.
- * @event: Pointer to the SDL event.
+ * handleInput - Handles user input events.
+ * @isRunning: Pointer to the game's running state.
  */
-void handle_input(GameState *state, SDL_Event *event)
+void handleInput(bool *isRunning)
 {
-	while (SDL_PollEvent(event))
+	SDL_Event event;
+	while (SDL_PollEvent(&event))
 	{
-		if (event->type == SDL_QUIT)
+		if (event.type == SDL_QUIT)
 		{
-			state->moveForward = 0;
-			state->moveBackward = 0;
-			state->rotateLeft = 0;
-			state->rotateRight = 0;
+			*isRunning = false;
 		}
-		else if (event->type == SDL_KEYDOWN)
+		if (event.type == SDL_KEYDOWN)
 		{
-			switch (event->key.keysym.sym)
+			if (event.key.keysym.sym == SDLK_ESCAPE)
 			{
-				case SDLK_w:
-					state->moveForward = 1;
-					break;
-				case SDLK_s:
-					state->moveBackward = 1;
-					break;
-				case SDLK_a:
-					state->rotateLeft = 1;
-					break;
-				case SDLK_d:
-					state->rotateRight = 1;
-					break;
-				default:
-					break;
+				*isRunning = false;
 			}
-		}
-		else if (event->type == SDL_KEYUP)
-		{
-			switch (event->key.keysym.sym)
+			if (event.key.keysym.sym == SDLK_w)
 			{
-				case SDLK_w:
-					state->moveForward = 0;
-					break;
-				case SDLK_s:
-					state->moveBackward = 0;
-					break;
-				case SDLK_a:
-					state->rotateLeft = 0;
-					break;
-				case SDLK_d:
-					state->rotateRight = 0;
-					break;
-				default:
-					break;
+				movePlayerForward();
+			}
+			if (event.key.keysym.sym == SDLK_s)
+			{
+				movePlayerBackward();
+			}
+			if (event.key.keysym.sym == SDLK_a)
+			{
+				movePlayerLeft();
+			}
+			if (event.key.keysym.sym == SDLK_d)
+			{
+				movePlayerRight();
 			}
 		}
 	}

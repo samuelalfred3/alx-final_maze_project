@@ -1,34 +1,57 @@
-#include <stdio.h>
-#include <string.h>
+#include "../inc/map.h"
+#include "../inc/graphics.h"
 #include "../inc/config.h"
 #include "../inc/game.h"
+#include "../inc/textures.h"
 
-char map[MAP_HEIGHT][MAP_WIDTH + 1] = {
-	"66666666666666666666",
-	"60000060000600000006",
-	"60000000011110000006",
-	"60101010001000770006",
-	"60000000000000700006",
-	"60000000000000070006",
-	"60000777700011077006",
-	"60000000000000000006",
-	"60001000000000010006",
-	"60001010000000710006",
-	"60006600000000000006",
-	"60000060000000000006",
-	"66666666666666666666"
+const int map[MAP_NUM_ROWS][MAP_NUM_COLS] = {
+	/* map layout */
+	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
+	{1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
+	{1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1},
+	{1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1},
+	{1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+	{1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 };
 
 /**
- * get_map_value - Get map value at specific position.
- * @x: X-coordinate on the map.
- * @y: Y-coordinate on the map.
- * Return: The value at the given coordinates or -1 if out of bounds.
+ * DetectCollision - Detects collision at given coordinates.
+ * @x: X-coordinate to check.
+ * @y: Y-coordinate to check.
+ *
+ * Return: true if there is a collision, false otherwise.
  */
-int get_map_value(int x, int y)
+bool DetectCollision(float x, float y)
 {
-	if (x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT)
-		return -1; /* Out of bounds */
-	return map[y][x];
+	if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT)
+	{
+		return (true);
+	}
+	int mapX = floor(x / TILE_SIZE);
+	int mapY = floor(y / TILE_SIZE);
+	return (map[mapY][mapX] != 0);
+}
+
+/**
+ * getMapValue - Gets the value at a specific row and column in the map.
+ * @row: Row index.
+ * @col: Column index.
+ *
+ * Return: Value at the specified row and column, or -1 if out of bounds.
+ */
+int getMapValue(int row, int col)
+{
+	if (row >= 0 && row < MAP_NUM_ROWS && col >= 0 && col < MAP_NUM_COLS)
+	{
+		return (map[row][col]);
+	}
+	return (-1);
 }
 

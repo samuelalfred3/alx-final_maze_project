@@ -1,57 +1,42 @@
 #include "../inc/window.h"
-#include <stdio.h>
+#include <SDL2/SDL.h>
 
-static SDL_Window *window = NULL;
-static SDL_Renderer *renderer = NULL;
-static SDL_Texture *colorBufferTexture = NULL;
-static Uint32 *colorBuffer = NULL;
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
 
 /**
- * initializeWindow - Initialize the SDL window and renderer.
- * Return: true if successful, false otherwise.
+ * initWindow - Initializes the SDL window and renderer.
+ *
+ * Return: true on success, false on failure.
  */
-bool initializeWindow(void)
+bool initWindow()
 {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
-		fprintf(stderr, "SDL could not initialize: %s\n", SDL_GetError());
+		fprintf(stderr, "Error initializing SDL: %s\n", SDL_GetError());
 		return (false);
 	}
 
-	window = SDL_CreateWindow("Raycasting Maze",
+	window = SDL_CreateWindow(
+			"Maze Game",
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,
 			SCREEN_WIDTH,
 			SCREEN_HEIGHT,
-			SDL_WINDOW_SHOWN);
-	if (window == NULL)
+			SDL_WINDOW_SHOWN
+			);
+
+	if (!window)
 	{
-		fprintf(stderr, "Window could not be created: %s\n", SDL_GetError());
+		fprintf(stderr, "Error creating SDL window: %s\n", SDL_GetError());
 		return (false);
 	}
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	if (renderer == NULL)
+	if (!renderer)
 	{
-		fprintf(stderr, "Renderer could not be created: %s\n", SDL_GetError());
-		return (false);
-	}
-
-	colorBuffer = (Uint32 *)malloc(sizeof(Uint32) * SCREEN_WIDTH * SCREEN_HEIGHT);
-	if (colorBuffer == NULL)
-	{
-		fprintf(stderr, "Could not allocate color buffer\n");
-		return (false);
-	}
-
-	colorBufferTexture = SDL_CreateTexture(renderer,
-			SDL_PIXELFORMAT_ARGB8888,
-			SDL_TEXTUREACCESS_STREAMING,
-			SCREEN_WIDTH,
-			SCREEN_HEIGHT);
-	if (colorBufferTexture == NULL)
-	{
-		fprintf(stderr, "Could not create color buffer texture: %s\n", SDL_GetError());
+		fprintf(stderr, "Error creating SDL renderer: %s\n", SDL_GetError());
+		SDL_DestroyWindow(window);
 		return (false);
 	}
 
@@ -59,76 +44,12 @@ bool initializeWindow(void)
 }
 
 /**
- * destroyWindow - Clean up and destroy the SDL window and renderer.
+ * cleanUpWindow - Cleans up the SDL window and renderer.
  */
-void destroyWindow(void)
+void cleanUpWindow()
 {
-	if (colorBufferTexture)
-	{
-		SDL_DestroyTexture(colorBufferTexture);
-		colorBufferTexture = NULL;
-	}
-
-	if (colorBuffer)
-	{
-		free(colorBuffer);
-		colorBuffer = NULL;
-	}
-
-	if (renderer)
-	{
-		SDL_DestroyRenderer(renderer);
-		renderer = NULL;
-	}
-
-	if (window)
-	{
-		SDL_DestroyWindow(window);
-		window = NULL;
-	}
-
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
 	SDL_Quit();
-}
-
-/**
- * clearColorBuffer - Clear the color buffer with a specific color.
- * @color: The color to clear the buffer with.
- */
-void clearColorBuffer(color_t color)
-{
-	Uint32 clearColor = (color.a << 24) | (color.r << 16) | (color.g << 8) | color.b;
-	for (int y = 0; y < SCREEN_HEIGHT; y++)
-	{
-		for (int x = 0; x < SCREEN_WIDTH; x++)
-		{
-			colorBuffer[(SCREEN_WIDTH * y) + x] = clearColor;
-		}
-	}
-}
-
-/**
- * renderColorBuffer - Render the color buffer to the screen.
- */
-void renderColorBuffer(void)
-{
-	SDL_UpdateTexture(colorBufferTexture, NULL, colorBuffer, SCREEN_WIDTH * sizeof(Uint32));
-	SDL_RenderCopy(renderer, colorBufferTexture, NULL, NULL);
-	SDL_RenderPresent(renderer);
-}
-
-/**
- * drawPixel - Draw a pixel on the color buffer.
- * @x: The x coordinate of the pixel.
- * @y: The y coordinate of the pixel.
- * @color: The color of the pixel.
- */
-void drawPixel(int x, int y, color_t color)
-{
-	if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT)
-	{
-		return;
-	}
-	Uint32 pixelColor = (color.a << 24) | (color.r << 16) | (color.g << 8) | color.b;
-	colorBuffer[(SCREEN_WIDTH * y) + x] = pixelColor;
 }
 

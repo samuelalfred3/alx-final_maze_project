@@ -1,15 +1,16 @@
 #ifndef MAP_H
 #define MAP_H
 
-#define MAP_WIDTH 20
-#define MAP_HEIGHT 13
+#include <stdbool.h>
 
-/* External map declaration */
-extern char map[MAP_HEIGHT][MAP_WIDTH + 1];
+#define MAP_NUM_ROWS 13
+#define MAP_NUM_COLS 20
+#define TILE_SIZE 64
 
-/* Function prototype for loading the map */
-void load_map(const char *filename);
-int get_map_value(int x, int y);
+bool DetectCollision(float x, float y);
+void renderMap(void);
+int getMapValue(int row, int col);
+bool isInsideMap(float x, float y);
 
-#endif /* MAP_H */
+#endif
 

@@ -1,23 +1,20 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define MAP_WIDTH 20
-#define MAP_HEIGHT 13
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+#include <math.h>
 
-#include <SDL2/SDL.h>
+#define PI 3.14159265358979323846
+#define FOV_ANGLE (60 * (PI / 180))
+#define DIST_PROJ_PLANE ((SCREEN_WIDTH / 2) / tan(FOV_ANGLE / 2))
 
-typedef struct
-{
-	Uint8 r;
-	Uint8 g;
-	Uint8 b;
-	Uint8 a;
-} color_t;
+#define TILE_SIZE 64
+#define MAP_NUM_ROWS 13
+#define MAP_NUM_COLS 20
+#define WINDOW_WIDTH (MAP_NUM_COLS * TILE_SIZE)
+#define WINDOW_HEIGHT (MAP_NUM_ROWS * TILE_SIZE)
+#define SCREEN_WIDTH WINDOW_WIDTH
+#define SCREEN_HEIGHT WINDOW_HEIGHT
+#define NUM_RAYS WINDOW_WIDTH
 
-/* Extern map declaration */
-extern char map[MAP_HEIGHT][MAP_WIDTH + 1];
-
-#endif /* CONFIG_H */
+#endif
 

@@ -1,66 +1,58 @@
-#include "../inc/game.h"
 #include "../inc/config.h"
-#include <math.h>
+#include "../inc/game.h"
+#include "../inc/graphics.h"
+#include "../inc/player.h"
+#include "../inc/ray.h"
+#include "../inc/input.h"
 #include "../inc/map.h"
 
+Player player;
+
 /**
- * init_game - Initialize game state.
- * @state: Pointer to the game state structure.
+ * setup_game - Initialize the game setup.
  */
-void init_game(GameState *state)
-{
-	state->playerPosX = 2.0;
-	state->playerPosY = 2.0;
-	state->playerDirX = -1.0;
-	state->playerDirY = 0.0;
-	state->planeX = 0.0;
-	state->planeY = 0.66;
-	state->moveForward = 0;
-	state->moveBackward = 0;
-	state->rotateLeft = 0;
-	state->rotateRight = 0;
+void setup_game(void) {
+	player.x = SCREEN_WIDTH / 2;
+	player.y = SCREEN_HEIGHT / 2;
+	player.width = 32;
+	player.height = 32;
+	player.walkDirection = 0;
+	player.walkSpeed = 100;
+	player.turnDirection = 0;
+	player.turnSpeed = 45 * (PI / 180);
+	player.rotationAngle = PI / 2;
+
+    /* Initialize player */
+	initPlayer(&player);
 }
 
 /**
- * update_game - Update game state based on input.
- * @state: Pointer to the game state structure.
+ * update_game - Update game state.
  */
-void update_game(GameState *state)
-{
-	double moveSpeed = 0.05;
-	double rotSpeed = 0.05;
+void update_game(void) {
+	int timeToWait = FRAME_TIME_LENGTH - (SDL_GetTicks() - TicksLastFrame);
 
-	if (state->moveForward)
-	{
-		if (get_map_value((int)(state->playerPosX + state->playerDirX * moveSpeed), (int)state->playerPosY) == '0')
-			state->playerPosX += state->playerDirX * moveSpeed;
-		if (get_map_value((int)state->playerPosX, (int)(state->playerPosY + state->playerDirY * moveSpeed)) == '0')
-			state->playerPosY += state->playerDirY * moveSpeed;
+	if (timeToWait > 0 && timeToWait <= FRAME_TIME_LENGTH) {
+		SDL_Delay(timeToWait);
 	}
-	if (state->moveBackward)
-	{
-		if (get_map_value((int)(state->playerPosX - state->playerDirX * moveSpeed), (int)state->playerPosY) == '0')
-			state->playerPosX -= state->playerDirX * moveSpeed;
-		if (get_map_value((int)state->playerPosX, (int)(state->playerPosY - state->playerDirY * moveSpeed)) == '0')
-			state->playerPosY -= state->playerDirY * moveSpeed;
-	}
-	if (state->rotateLeft)
-	{
-		double oldDirX = state->playerDirX;
-		state->playerDirX = state->playerDirX * cos(-rotSpeed) - state->playerDirY * sin(-rotSpeed);
-		state->playerDirY = oldDirX * sin(-rotSpeed) + state->playerDirY * cos(-rotSpeed);
-		double oldPlaneX = state->planeX;
-		state->planeX = state->planeX * cos(-rotSpeed) - state->planeY * sin(-rotSpeed);
-		state->planeY = oldPlaneX * sin(-rotSpeed) + state->planeY * cos(-rotSpeed);
-	}
-	if (state->rotateRight)
-	{
-		double oldDirX = state->playerDirX;
-		state->playerDirX = state->playerDirX * cos(rotSpeed) - state->playerDirY * sin(rotSpeed);
-		state->playerDirY = oldDirX * sin(rotSpeed) + state->playerDirY * cos(rotSpeed);
-		double oldPlaneX = state->planeX;
-		state->planeX = state->planeX * cos(rotSpeed) - state->planeY * sin(rotSpeed);
-		state->planeY = oldPlaneX * sin(rotSpeed) + state->planeY * cos(rotSpeed);
-	}
+
+	float DeltaTime = (SDL_GetTicks() - TicksLastFrame) / 1000.0f;
+
+	TicksLastFrame = SDL_GetTicks();
+
+	handlePlayerInput(&player);
+	movePlayer(&player, DeltaTime);
+	castAllRays();
+}
+
+/**
+ * render_game - Render the game.
+ */
+void render_game(void) {
+	clearColorBuffer(0xFF000000);
+	renderMap();
+	renderRays();
+	renderPlayer();
+	renderColorBuffer();
 }
 
