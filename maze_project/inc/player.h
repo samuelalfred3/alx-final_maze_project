@@ -2,15 +2,16 @@
 #define PLAYER_H
 
 #include <SDL2/SDL.h>
-#include <stdbool.h>
+#include "../inc/config.h"
 
-typedef struct {
+typedef struct
+{
 	float x;
 	float y;
 	float width;
 	float height;
-	int turnDirection;
 	int walkDirection;
+	int turnDirection;
 	float rotationAngle;
 	float walkSpeed;
 	float turnSpeed;
@@ -18,13 +19,14 @@ typedef struct {
 
 extern Player player;
 
-void movePlayer(Player* player, float deltaTime);
-void movePlayerForward();
-void movePlayerBackward();
-void movePlayerLeft();
-void movePlayerRight();
-void renderPlayer();
+void initPlayer(Player* player);
 void handlePlayerInput(Player* player);
+void movePlayer(Player* player, float deltaTime);
+void renderPlayer(Player* player);
+void movePlayerForward(Player* player);
+void movePlayerBackward(Player* player);
+void movePlayerLeft(Player* player);
+void movePlayerRight(Player* player);
 
-#endif
+#endif /* PLAYER_H */
 

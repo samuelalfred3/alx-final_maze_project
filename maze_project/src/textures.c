@@ -2,8 +2,7 @@
 #include <SDL2/SDL_image.h>
 #include "../inc/textures.h"
 
-extern SDL_Renderer* renderer;
-SDL_Texture* wallTextures[4];
+SDL_Texture* wallTextures[NUM_WALL_TEXTURES];
 
 /**
  * WallTexturesready - Loads wall textures into the wallTextures array.
@@ -44,7 +43,7 @@ SDL_Texture* loadTexture(const char* file)
  */
 void freeWallTextures()
 {
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < NUM_WALL_TEXTURES; i++)
 	{
 		if (wallTextures[i])
 		{

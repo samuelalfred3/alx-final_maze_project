@@ -3,9 +3,13 @@
 
 #include <SDL2/SDL.h>
 
-void WallTexturesready();
-SDL_Texture* loadTexture(const char* file);
-void freeWallTextures();
+#define NUM_WALL_TEXTURES 4
 
-#endif
+extern SDL_Texture* wallTextures[NUM_WALL_TEXTURES];
+
+void WallTexturesready(void);
+void freeWallTextures(void);
+SDL_Texture* loadTexture(const char *file);
+
+#endif /* TEXTURES_H */
 

@@ -2,8 +2,13 @@
 #define WINDOW_H
 
 #include <stdbool.h>
+#include <SDL2/SDL.h>
 
-bool initializeWindow(void);
+extern SDL_Window *window;
+extern SDL_Renderer *renderer;
 
-#endif
+bool initWindow(void);
+void destroyWindow(void);
+
+#endif /* WINDOW_H */
 

@@ -1,7 +1,10 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-void processInput(void);
+#include <stdbool.h>
+#include "../inc/player.h"
 
-#endif
+void handleInput(bool *isRunning, Player *player);
+
+#endif /* INPUT_H */
 

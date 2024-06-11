@@ -5,7 +5,8 @@
 #include "config.h"
 #include <stdbool.h>
 
-typedef struct {
+typedef struct
+{
 	float rayAngle;
 	float distance;
 	int wallHitX;
@@ -18,13 +19,11 @@ typedef struct {
 	bool isRayFacingRight;
 } Ray;
 
-#define NUM_RAYS (WINDOW_WIDTH)
-
 extern Ray rays[NUM_RAYS];
 
 void castRay(float rayAngle, int stripId);
 void castAllRays();
 void renderRays();
 
-#endif
+#endif /* RAY_H */
 

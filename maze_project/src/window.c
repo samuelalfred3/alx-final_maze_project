@@ -1,5 +1,6 @@
-#include "../inc/window.h"
 #include <SDL2/SDL.h>
+#include "../inc/window.h"
+#include "../inc/config.h"
 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
@@ -9,7 +10,7 @@ SDL_Renderer *renderer = NULL;
  *
  * Return: true on success, false on failure.
  */
-bool initWindow()
+bool initWindow(void)
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
@@ -44,12 +45,20 @@ bool initWindow()
 }
 
 /**
- * cleanUpWindow - Cleans up the SDL window and renderer.
+ * destroyWindow - Cleans up and destroys the SDL window and renderer.
  */
-void cleanUpWindow()
+void destroyWindow(void)
 {
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
+	if (renderer)
+	{
+		SDL_DestroyRenderer(renderer);
+		renderer = NULL;
+	}
+	if (window)
+	{
+		SDL_DestroyWindow(window);
+		window = NULL;
+	}
 	SDL_Quit();
 }
 

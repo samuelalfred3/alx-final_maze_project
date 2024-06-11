@@ -3,7 +3,8 @@
 
 #include <stddef.h>
 
-typedef enum upng_error {
+typedef enum upng_error
+{
 	UPNG_EOK            = 0, /* success (no error) */
 	UPNG_ENOMEM         = 1, /* memory allocation failed */
 	UPNG_ENOTFOUND      = 2, /* resource not found */
@@ -13,13 +14,26 @@ typedef enum upng_error {
 	UPNG_EUNKNOWN       = 6  /* unknown error */
 } upng_error;
 
-typedef enum upng_format {
+typedef enum upng_format
+{
 	UPNG_BADFORMAT,
 	UPNG_RGB8,
 	UPNG_RGBA8
 } upng_format;
 
-typedef struct upng_t upng_t;
+typedef struct upng_t
+{
+	const unsigned char* buffer;
+	unsigned long size;
+	upng_error error;
+	unsigned width;
+	unsigned height;
+	unsigned bpp;
+	unsigned bitdepth;
+	unsigned pixelsize;
+	unsigned rowbytes;
+	upng_format format;
+} upng_t;
 
 upng_t* upng_new_from_bytes(const unsigned char* buffer, unsigned long size);
 upng_t* upng_new_from_file(const char* path);
@@ -40,5 +54,5 @@ unsigned upng_get_rowbytes(const upng_t* upng);
 upng_format upng_get_format(const upng_t* upng);
 const unsigned char* upng_get_buffer(const upng_t* upng);
 
-#endif /*defined(UPNG_H)*/
+#endif /* UPNG_H */
 

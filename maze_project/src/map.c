@@ -1,9 +1,11 @@
+#include <math.h>
 #include "../inc/map.h"
 #include "../inc/graphics.h"
 #include "../inc/config.h"
 #include "../inc/game.h"
 #include "../inc/textures.h"
 
+/* The map layout represented as a 2D array */
 const int map[MAP_NUM_ROWS][MAP_NUM_COLS] = {
 	/* map layout */
 	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -53,5 +55,18 @@ int getMapValue(int row, int col)
 		return (map[row][col]);
 	}
 	return (-1);
+}
+
+/**
+ * isInsideMap - Checks if a point is inside the map boundaries.
+ * @x: X-coordinate to check.
+ * @y: Y-coordinate to check.
+ *
+ * Return: true if the point is inside the map, false otherwise.
+ */
+bool isInsideMap(float x, float y)
+{
+       	return x >= 0 && x < MAP_NUM_COLS * TILE_SIZE &&
+		y >= 0 && y < MAP_NUM_ROWS * TILE_SIZE;
 }
 

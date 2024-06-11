@@ -4,8 +4,9 @@
 #include "../inc/graphics.h"
 #include "../inc/config.h"
 #include <SDL2/SDL_image.h>
+#include <math.h>
 
-extern Player player;
+extern bool isRunning;
 
 static SDL_Texture *playerTexture;
 
@@ -16,6 +17,7 @@ static SDL_Texture *playerTexture;
 void initPlayer(Player *player)
 {
 	SDL_Surface *surface = IMG_Load("images/character.png");
+
 	if (!surface)
 	{
 		fprintf(stderr, "Error loading player texture: %s\n", IMG_GetError());
@@ -39,17 +41,18 @@ void initPlayer(Player *player)
 void handlePlayerInput(Player *player)
 {
 	SDL_Event event;
+
 	while (SDL_PollEvent(&event))
 	{
 		if (event.type == SDL_QUIT)
 		{
-			GameRunning = false;
+			isRunning = false;
 		}
 		if (event.type == SDL_KEYDOWN)
 		{
 			if (event.key.keysym.sym == SDLK_ESCAPE)
 			{
-				GameRunning = false;
+				isRunning = false;
 			}
 			if (event.key.keysym.sym == SDLK_UP)
 			{
@@ -114,14 +117,55 @@ void renderPlayer(Player *player)
 		.w = player->width,
 		.h = player->height
 	};
-	SDL_RenderCopy(renderer, playerTexture, NULL, &playerRect);
+
+	SDL_RenderCopyEx(renderer, playerTexture, NULL, &playerRect, player->rotationAngle * (180.0 / PI), NULL, SDL_FLIP_NONE);
 }
 
 /**
  * cleanUpPlayer - Cleans up resources associated with the player.
  */
-void cleanUpPlayer()
+void cleanUpPlayer(void)
 {
 	SDL_DestroyTexture(playerTexture);
+}
+
+/**
+ * movePlayerForward - Move the player forward.
+ * @player: Pointer to the Player structure.
+ */
+void movePlayerForward(Player *player)
+{
+	player->x += cos(player->rotationAngle) * player->walkSpeed;
+	player->y += sin(player->rotationAngle) * player->walkSpeed;
+}
+
+/**
+ * movePlayerBackward - Move the player backward.
+ * @player: Pointer to the Player structure.
+ */
+void movePlayerBackward(Player *player)
+{
+	player->x -= cos(player->rotationAngle) * player->walkSpeed;
+	player->y -= sin(player->rotationAngle) * player->walkSpeed;
+}
+
+/**
+ * movePlayerLeft - Move the player left.
+ * @player: Pointer to the Player structure.
+ */
+void movePlayerLeft(Player *player)
+{
+	player->x -= cos(player->rotationAngle + PI / 2) * player->walkSpeed;
+	player->y -= sin(player->rotationAngle + PI / 2) * player->walkSpeed;
+}
+
+/**
+ * movePlayerRight - Move the player right.
+ * @player: Pointer to the Player structure.
+ */
+void movePlayerRight(Player *player)
+{
+	player->x += cos(player->rotationAngle + PI / 2) * player->walkSpeed;
+	player->y += sin(player->rotationAngle + PI / 2) * player->walkSpeed;
 }
 

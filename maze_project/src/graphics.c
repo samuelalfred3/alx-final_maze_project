@@ -1,9 +1,9 @@
 #include "../inc/game.h"
 #include "../inc/upng.h"
+#include "../inc/window.h"
 #include "../inc/graphics.h"
 #include "../inc/map.h"
 #include "../inc/textures.h"
-#include "../inc/window.h"
 #include "../inc/ray.h"
 #include "../inc/player.h"
 #include "../inc/config.h"
@@ -13,7 +13,6 @@
 SDL_Renderer *renderer;
 static color_t *colorBuffer;
 static SDL_Texture *colorBufferTexture;
-static SDL_Window *window;
 
 /**
  * initializeWindow - Initializes the SDL window and renderer.

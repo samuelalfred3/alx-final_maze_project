@@ -1,20 +1,16 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <math.h>
-
-#define PI 3.14159265358979323846
-#define FOV_ANGLE (60 * (PI / 180))
-#define DIST_PROJ_PLANE ((SCREEN_WIDTH / 2) / tan(FOV_ANGLE / 2))
-
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
 #define TILE_SIZE 64
-#define MAP_NUM_ROWS 13
-#define MAP_NUM_COLS 20
-#define WINDOW_WIDTH (MAP_NUM_COLS * TILE_SIZE)
-#define WINDOW_HEIGHT (MAP_NUM_ROWS * TILE_SIZE)
-#define SCREEN_WIDTH WINDOW_WIDTH
-#define SCREEN_HEIGHT WINDOW_HEIGHT
-#define NUM_RAYS WINDOW_WIDTH
+#define FOV_ANGLE (60 * (PI / 180))
+#define NUM_RAYS SCREEN_WIDTH
+#define DIST_PROJ_PLANE ((SCREEN_WIDTH / 2) / tan(FOV_ANGLE / 2))
+#define MINIMAP_SCALE_FACTOR 0.2
 
-#endif
+#define FRAME_TIME_LENGTH (1000 / 60)
+#define PI 3.14159265
+
+#endif /* CONFIG_H */
 

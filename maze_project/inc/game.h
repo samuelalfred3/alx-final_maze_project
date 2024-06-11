@@ -3,12 +3,14 @@
 
 #include <stdbool.h>
 
-extern bool GameRunning;
-extern int TicksLastFrame;
-
 void setup_game(void);
 void update_game(void);
 void render_game(void);
+void destroy_game(void);
+void WallTexturesready(void);
+void freeWallTextures(void);
 
-#endif
+extern bool isRunning;
+
+#endif /* GAME_H */
 

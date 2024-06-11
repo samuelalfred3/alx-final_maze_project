@@ -12,5 +12,5 @@ void renderMap(void);
 int getMapValue(int row, int col);
 bool isInsideMap(float x, float y);
 
-#endif
+#endif /* MAP_H */
 
