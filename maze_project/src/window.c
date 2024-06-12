@@ -1,64 +1,54 @@
-#include <SDL2/SDL.h>
 #include "../inc/window.h"
-#include "../inc/config.h"
+#include "../inc/game.h"
+#include <SDL2/SDL.h>
 
+extern SDL_Renderer *renderer;
 SDL_Window *window = NULL;
-SDL_Renderer *renderer = NULL;
 
-/**
- * initWindow - Initializes the SDL window and renderer.
- *
- * Return: true on success, false on failure.
- */
 bool initWindow(void)
 {
+	SDL_DisplayMode display_mode;
+	int fullScreenWidth, fullScreenHeight;
+
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
-		fprintf(stderr, "Error initializing SDL: %s\n", SDL_GetError());
+		fprintf(stderr, "Error initializing SDL.\n");
 		return (false);
 	}
 
+	SDL_GetCurrentDisplayMode(0, &display_mode);
+	fullScreenWidth = display_mode.w;
+	fullScreenHeight = display_mode.h;
 	window = SDL_CreateWindow(
-			"Maze Game",
+			NULL,
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,
-			SCREEN_WIDTH,
-			SCREEN_HEIGHT,
-			SDL_WINDOW_SHOWN
+			fullScreenWidth,
+			fullScreenHeight,
+			SDL_WINDOW_BORDERLESS
 			);
 
 	if (!window)
 	{
-		fprintf(stderr, "Error creating SDL window: %s\n", SDL_GetError());
+		fprintf(stderr, "Error creating SDL window.\n");
 		return (false);
 	}
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	renderer = SDL_CreateRenderer(window, -1, 0);
 	if (!renderer)
 	{
-		fprintf(stderr, "Error creating SDL renderer: %s\n", SDL_GetError());
-		SDL_DestroyWindow(window);
+		fprintf(stderr, "Error creating SDL renderer.\n");
 		return (false);
 	}
 
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	return (true);
 }
 
-/**
- * destroyWindow - Cleans up and destroys the SDL window and renderer.
- */
 void destroyWindow(void)
 {
-	if (renderer)
-	{
-		SDL_DestroyRenderer(renderer);
-		renderer = NULL;
-	}
-	if (window)
-	{
-		SDL_DestroyWindow(window);
-		window = NULL;
-	}
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
 

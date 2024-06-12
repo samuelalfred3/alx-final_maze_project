@@ -1,13 +1,16 @@
+#include "../inc/textures.h"
+#include "../inc/graphics.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "../inc/textures.h"
+
+extern SDL_Renderer *renderer;
 
 SDL_Texture* wallTextures[NUM_WALL_TEXTURES];
 
 /**
  * WallTexturesready - Loads wall textures into the wallTextures array.
  */
-void WallTexturesready()
+void WallTexturesready(void)
 {
 	wallTextures[0] = loadTexture("images/wall.png");
 	wallTextures[1] = loadTexture("images/ground.png");
@@ -21,27 +24,23 @@ void WallTexturesready()
  *
  * Return: Pointer to the SDL texture, or NULL on failure.
  */
-SDL_Texture* loadTexture(const char* file)
+SDL_Texture* loadTexture(const char* filePath)
 {
-	SDL_Surface* surface = IMG_Load(file);
+	SDL_Surface* surface = IMG_Load(filePath);
 	if (!surface)
 	{
-		fprintf(stderr, "Error creating SDL surface: %s\n", SDL_GetError());
+		fprintf(stderr, "Error loading texture: %s\n", IMG_GetError());
 		return (NULL);
 	}
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 	SDL_FreeSurface(surface);
-	if (!texture)
-	{
-		fprintf(stderr, "Error creating SDL texture: %s\n", SDL_GetError());
-	}
-	return (texture);
+	return texture;
 }
 
 /**
  * freeWallTextures - Frees all loaded wall textures.
  */
-void freeWallTextures()
+void freeWallTextures(void)
 {
 	for (int i = 0; i < NUM_WALL_TEXTURES; i++)
 	{

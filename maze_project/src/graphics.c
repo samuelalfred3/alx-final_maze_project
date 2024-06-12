@@ -1,7 +1,7 @@
+#include "../inc/graphics.h"
 #include "../inc/game.h"
 #include "../inc/upng.h"
 #include "../inc/window.h"
-#include "../inc/graphics.h"
 #include "../inc/map.h"
 #include "../inc/textures.h"
 #include "../inc/ray.h"
@@ -10,9 +10,11 @@
 #include <SDL2/SDL.h>
 #include <stdlib.h>
 
-SDL_Renderer *renderer;
-static color_t *colorBuffer;
-static SDL_Texture *colorBufferTexture;
+extern SDL_Renderer *renderer;
+extern SDL_Window *window;
+
+static color_t *colorBuffer = NULL;
+static SDL_Texture *colorBufferTexture = NULL;
 
 /**
  * initializeWindow - Initializes the SDL window and renderer.
@@ -29,6 +31,7 @@ bool initializeWindow(void)
 		fprintf(stderr, "Error initializing SDL.\n");
 		return (false);
 	}
+
 	SDL_GetCurrentDisplayMode(0, &display_mode);
 	fullScreenWidth = display_mode.w;
 	fullScreenHeight = display_mode.h;
@@ -40,18 +43,22 @@ bool initializeWindow(void)
 			fullScreenHeight,
 			SDL_WINDOW_BORDERLESS
 			);
+
 	if (!window)
 	{
 		fprintf(stderr, "Error creating SDL window.\n");
 		return (false);
 	}
+
 	renderer = SDL_CreateRenderer(window, -1, 0);
 	if (!renderer)
 	{
 		fprintf(stderr, "Error creating SDL renderer.\n");
 		return (false);
 	}
+
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
 	colorBuffer = (color_t*)malloc(sizeof(color_t) * fullScreenWidth * fullScreenHeight);
 	colorBufferTexture = SDL_CreateTexture(
 			renderer,
@@ -60,6 +67,7 @@ bool initializeWindow(void)
 			fullScreenWidth,
 			fullScreenHeight
 			);
+
 	return (true);
 }
 

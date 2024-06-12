@@ -7,6 +7,7 @@
 #include <math.h>
 
 extern bool isRunning;
+extern SDL_Renderer *renderer;
 
 static SDL_Texture *playerTexture;
 

@@ -9,7 +9,7 @@ extern SDL_Texture* wallTextures[NUM_WALL_TEXTURES];
 
 void WallTexturesready(void);
 void freeWallTextures(void);
-SDL_Texture* loadTexture(const char *file);
+SDL_Texture* loadTexture(const char* filePath);
 
 #endif /* TEXTURES_H */
 

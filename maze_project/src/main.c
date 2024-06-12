@@ -5,6 +5,7 @@
 #include "../inc/graphics.h"
 #include "../inc/window.h"
 #include "../inc/player.h"
+#include "../inc/textures.h"
 
 bool isRunning = false;
 
