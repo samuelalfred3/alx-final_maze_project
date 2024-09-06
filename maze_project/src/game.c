@@ -4,7 +4,6 @@
 #include <stdio.h>
 
 /* Global variables for game state */
-static Game game;
 static Player player;
 
 void initialize_game(Game* game) {
@@ -86,20 +85,6 @@ void process_input(Game* game) {
 	}
 }
 
-void update_game(Game *game, Player *player) {
-	player->rotation_angle += player->turn_direction * player->rotation_speed;
-
-	float move_step = player->walk_direction * player->move_speed;
-	player->x += cos(player->rotation_angle) * move_step;
-	player->y += sin(player->rotation_angle) * move_step;
-
-    /* Ensure the player stays within the bounds of the window */
-	if (player->x < 0) player->x = 0;
-	if (player->x > WINDOW_WIDTH) player->x = WINDOW_WIDTH;
-	if (player->y < 0) player->y = 0;
-	if (player->y > WINDOW_HEIGHT) player->y = WINDOW_HEIGHT;
-}
-
 void render_game(Game* game, Player* player) {
 	SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 255); /* Black background */
 	SDL_RenderClear(game->renderer);
@@ -122,19 +107,5 @@ void destroy_game(Game* game) {
 	SDL_DestroyRenderer(game->renderer);
 	SDL_DestroyWindow(game->window);
 	SDL_Quit();
-}
-
-int main(int argc, char *argv[]) {
-	initialize_game(&game);
-
-	while (game.is_running) {
-		process_input(&game);
-		update_game(&game, &player);
-		render_game(&game, &player);
-		SDL_Delay(16); /* Frame delay for ~60FPS */
-	}
-
-	destroy_game(&game);
-	return (0);
 }
 
