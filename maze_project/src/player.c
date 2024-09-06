@@ -1,13 +1,7 @@
-#include "../inc/player.h"
-#include "../inc/map.h"
-#include "../inc/input.h"
-#include "../inc/graphics.h"
-#include "../inc/config.h"
+#include "../inc/game_config.h"
+#include "../inc/graphics_utils.h"
 #include <SDL2/SDL_image.h>
 #include <math.h>
-
-extern bool isRunning;
-extern SDL_Renderer *renderer;
 
 static SDL_Texture *playerTexture;
 
@@ -33,6 +27,15 @@ void initPlayer(Player *player)
 		fprintf(stderr, "Error creating player texture: %s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
+
+	/* Initialize player properties */
+	player->x = WINDOW_WIDTH / 2;
+	player->y = WINDOW_HEIGHT / 2;
+	player->width = 32;
+	player->height = 32;
+	player->rotationAngle = 0;
+	player->walkSpeed = 200.0;
+	player->turnSpeed = 90.0 * (M_PI / 180); /* Convert degrees to radians */
 }
 
 /**
@@ -51,36 +54,37 @@ void handlePlayerInput(Player *player)
 		}
 		if (event.type == SDL_KEYDOWN)
 		{
-			if (event.key.keysym.sym == SDLK_ESCAPE)
+			switch (event.key.keysym.sym)
 			{
-				isRunning = false;
-			}
-			if (event.key.keysym.sym == SDLK_UP)
-			{
-				player->walkDirection = +1;
-			}
-			if (event.key.keysym.sym == SDLK_DOWN)
-			{
-				player->walkDirection = -1;
-			}
-			if (event.key.keysym.sym == SDLK_RIGHT)
-			{
-				player->turnDirection = +1;
-			}
-			if (event.key.keysym.sym == SDLK_LEFT)
-			{
-				player->turnDirection = -1;
+				case SDLK_ESCAPE:
+					isRunning = false;
+					break;
+				case SDLK_UP:
+					player->walkDirection = +1;
+					break;
+				case SDLK_DOWN:
+					player->walkDirection = -1;
+					break;
+				case SDLK_LEFT:
+					player->turnDirection = -1;
+					break;
+				case SDLK_RIGHT:
+					player->turnDirection = +1;
+					break;
 			}
 		}
-		if (event.type == SDL_KEYUP)
+		else if (event.type == SDL_KEYUP)
 		{
-			if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN)
+			switch (event.key.keysym.sym)
 			{
-				player->walkDirection = 0;
-			}
-			if (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT)
-			{
-				player->turnDirection = 0;
+				case SDLK_UP:
+				case SDLK_DOWN:
+					player->walkDirection = 0;
+					break;
+				case SDLK_LEFT:
+				case SDLK_RIGHT:
+					player->turnDirection = 0;
+					break;
 			}
 		}
 	}
@@ -93,12 +97,23 @@ void handlePlayerInput(Player *player)
  */
 void movePlayer(Player *player, float deltaTime)
 {
+	/* Update rotation */
 	player->rotationAngle += player->turnDirection * player->turnSpeed * deltaTime;
+
+	/* Keep rotation between 0 and 2*PI */
+	if (player->rotationAngle < 0)
+		player->rotationAngle += 2 * M_PI;
+	else if (player->rotationAngle > 2 * M_PI)
+		player->rotationAngle -= 2 * M_PI;
+
+    /* Calculate step for movement */
 	float moveStep = player->walkDirection * player->walkSpeed * deltaTime;
 
+	/* Calculate new player position */
 	float newPlayerX = player->x + cos(player->rotationAngle) * moveStep;
 	float newPlayerY = player->y + sin(player->rotationAngle) * moveStep;
 
+	/* Check for collision before updating position */
 	if (!DetectCollision(newPlayerX, newPlayerY))
 	{
 		player->x = newPlayerX;
@@ -113,13 +128,14 @@ void movePlayer(Player *player, float deltaTime)
 void renderPlayer(Player *player)
 {
 	SDL_Rect playerRect = {
-		.x = player->x - player->width / 2,
-		.y = player->y - player->height / 2,
+		.x = (int)(player->x - player->width / 2),
+		.y = (int)(player->y - player->height / 2),
 		.w = player->width,
 		.h = player->height
 	};
 
-	SDL_RenderCopyEx(renderer, playerTexture, NULL, &playerRect, player->rotationAngle * (180.0 / PI), NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(renderer, playerTexture, NULL, &playerRect,
+			player->rotationAngle * (180.0 / M_PI), NULL, SDL_FLIP_NONE);
 }
 
 /**
@@ -128,45 +144,5 @@ void renderPlayer(Player *player)
 void cleanUpPlayer(void)
 {
 	SDL_DestroyTexture(playerTexture);
-}
-
-/**
- * movePlayerForward - Move the player forward.
- * @player: Pointer to the Player structure.
- */
-void movePlayerForward(Player *player)
-{
-	player->x += cos(player->rotationAngle) * player->walkSpeed;
-	player->y += sin(player->rotationAngle) * player->walkSpeed;
-}
-
-/**
- * movePlayerBackward - Move the player backward.
- * @player: Pointer to the Player structure.
- */
-void movePlayerBackward(Player *player)
-{
-	player->x -= cos(player->rotationAngle) * player->walkSpeed;
-	player->y -= sin(player->rotationAngle) * player->walkSpeed;
-}
-
-/**
- * movePlayerLeft - Move the player left.
- * @player: Pointer to the Player structure.
- */
-void movePlayerLeft(Player *player)
-{
-	player->x -= cos(player->rotationAngle + PI / 2) * player->walkSpeed;
-	player->y -= sin(player->rotationAngle + PI / 2) * player->walkSpeed;
-}
-
-/**
- * movePlayerRight - Move the player right.
- * @player: Pointer to the Player structure.
- */
-void movePlayerRight(Player *player)
-{
-	player->x += cos(player->rotationAngle + PI / 2) * player->walkSpeed;
-	player->y += sin(player->rotationAngle + PI / 2) * player->walkSpeed;
 }
 

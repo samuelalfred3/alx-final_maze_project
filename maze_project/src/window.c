@@ -1,54 +1,68 @@
-#include "../inc/window.h"
-#include "../inc/game.h"
 #include <SDL2/SDL.h>
+#include "../inc/game_config.h"
+#include "../inc/graphics_utils.h"
 
-extern SDL_Renderer *renderer;
 SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
 
-bool initWindow(void)
+/**
+ * initSDL - Initializes SDL and creates a window and renderer.
+ * Return: true if successful, false otherwise.
+ */
+bool initSDL(void)
 {
-	SDL_DisplayMode display_mode;
-	int fullScreenWidth, fullScreenHeight;
-
-	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
-		fprintf(stderr, "Error initializing SDL.\n");
 		return (false);
 	}
 
-	SDL_GetCurrentDisplayMode(0, &display_mode);
-	fullScreenWidth = display_mode.w;
-	fullScreenHeight = display_mode.h;
-	window = SDL_CreateWindow(
-			NULL,
+	window = SDL_CreateWindow("Maze Game",
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,
-			fullScreenWidth,
-			fullScreenHeight,
-			SDL_WINDOW_BORDERLESS
-			);
-
+			SCREEN_WIDTH,
+			SCREEN_HEIGHT,
+			SDL_WINDOW_SHOWN);
 	if (!window)
 	{
-		fprintf(stderr, "Error creating SDL window.\n");
+		SDL_Quit();
 		return (false);
 	}
 
-	renderer = SDL_CreateRenderer(window, -1, 0);
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	if (!renderer)
 	{
-		fprintf(stderr, "Error creating SDL renderer.\n");
+		SDL_DestroyWindow(window);
+		SDL_Quit();
 		return (false);
 	}
 
-	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	return (true);
 }
 
-void destroyWindow(void)
+/**
+ * clearScreen - Clears the screen with the background color.
+ */
+void clearScreen(void)
 {
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
+	SDL_SetRenderDrawColor(renderer, 0x000000FF); /* Black */
+	SDL_RenderClear(renderer);
+}
+
+/**
+ * closeSDL - Closes SDL, destroying the window and renderer.
+ */
+void closeSDL(void)
+{
+	if (renderer)
+	{
+		SDL_DestroyRenderer(renderer);
+		renderer = NULL;
+	}
+	if (window)
+	{
+		SDL_DestroyWindow(window);
+		window = NULL;
+	}
 	SDL_Quit();
 }
 

@@ -1,52 +1,63 @@
 #include <math.h>
-#include "../inc/map.h"
-#include "../inc/graphics.h"
-#include "../inc/config.h"
-#include "../inc/game.h"
-#include "../inc/textures.h"
+#include "../inc/game_config.h"
+#include "../inc/graphics_utils.h"
 
 /* The map layout represented as a 2D array */
 const int map[MAP_NUM_ROWS][MAP_NUM_COLS] = {
 	/* map layout */
 	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
-	{1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
-	{1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1},
-	{1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1},
-	{1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1},
-	{1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
-	{1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1},
-	{1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
-	{1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1},
+	{1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
+	{1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1},
+	{1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1},
+	{1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1},
 	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 };
 
 /**
- * DetectCollision - Detects collision at given coordinates.
- * @x: X-coordinate to check.
- * @y: Y-coordinate to check.
- *
+ * isInsideMap - Checks if the coordinates are within the map boundaries.
+ * @x: The x-coordinate to check.
+ * @y: The y-coordinate to check.
+ * Return: true if inside map boundaries, false otherwise.
+ */
+bool isInsideMap(float x, float y)
+{
+	return (x >= 0 && x < MAP_WIDTH * TILE_SIZE &&
+		y >= 0 && y < MAP_HEIGHT * TILE_SIZE);
+}
+
+/**
+ * DetectCollision - Detects collision at a given position.
+ * @x: The x-coordinate to check.
+ * @y: The y-coordinate to check.
  * Return: true if there is a collision, false otherwise.
  */
 bool DetectCollision(float x, float y)
 {
-	if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT)
-	{
-		return (true);
-	}
-	int mapX = floor(x / TILE_SIZE);
-	int mapY = floor(y / TILE_SIZE);
+	int mapX = (int)floorf(x / TILE_SIZE)
+		int mapY = (int)floorf(y / TILE_SIZE);
+
 	return (map[mapY][mapX] != 0);
 }
 
 /**
- * getMapValue - Gets the value at a specific row and column in the map.
- * @row: Row index.
- * @col: Column index.
- *
- * Return: Value at the specified row and column, or -1 if out of bounds.
+ * getMapValue - Retrieves the map value at a specific grid position.
+ * @row: The row index in the map array.
+ * @col: The column index in the map array.
+ * Return: The map value at the specified position.
  */
 int getMapValue(int row, int col)
 {
@@ -54,19 +65,6 @@ int getMapValue(int row, int col)
 	{
 		return (map[row][col]);
 	}
-	return (-1);
-}
-
-/**
- * isInsideMap - Checks if a point is inside the map boundaries.
- * @x: X-coordinate to check.
- * @y: Y-coordinate to check.
- *
- * Return: true if the point is inside the map, false otherwise.
- */
-bool isInsideMap(float x, float y)
-{
-       	return x >= 0 && x < MAP_NUM_COLS * TILE_SIZE &&
-		y >= 0 && y < MAP_NUM_ROWS * TILE_SIZE;
+	return (0); /* Out of bounds */
 }
 

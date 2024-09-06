@@ -1,10 +1,7 @@
 #include <math.h>
 #include <SDL2/SDL.h>
-#include "../inc/ray.h"
-#include "../inc/player.h"
-#include "../inc/config.h"
-#include "../inc/graphics.h"
-#include "../inc/map.h"
+#include "../inc/game_config.h"
+#include "../inc/graphics_utils.h"
 
 extern Player player;
 Ray rays[NUM_RAYS];
@@ -16,10 +13,10 @@ Ray rays[NUM_RAYS];
  */
 float normalizeAngle(float angle)
 {
-	angle = remainder(angle, 2 * PI);
+	angle = fmod(angle, 2 * PI);
 	if (angle < 0)
 	{
-		angle = (2 * PI) + angle;
+		angle += 2 * PI;
 	}
 	return (angle);
 }
@@ -34,7 +31,7 @@ float normalizeAngle(float angle)
  */
 float distanceBetweenPoints(float x1, float y1, float x2, float y2)
 {
-	return (sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
+	return (sqrtf((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
 }
 
 /**
@@ -59,17 +56,17 @@ void castRay(float rayAngle, int stripId)
 	bool foundHorzWallHit = false;
 	float horzWallHitX = 0;
 	float horzWallHitY = 0;
-	int horzWallContent = 0;
+	int horzWallContent = 0
 
-	yintercept = floor(player.y / TILE_SIZE) * TILE_SIZE;
+		yintercept = floorf(player.y / TILE_SIZE) * TILE_SIZE;
 	yintercept += isRayFacingDown ? TILE_SIZE : 0;
 
-	xintercept = player.x + (yintercept - player.y) / tan(rayAngle);
+	xintercept = player.x + (yintercept - player.y) / tanf(rayAngle);
 
 	ystep = TILE_SIZE;
 	ystep *= isRayFacingUp ? -1 : 1;
 
-	xstep = TILE_SIZE / tan(rayAngle);
+	xstep = TILE_SIZE / tanf(rayAngle);
 	xstep *= (isRayFacingLeft && xstep > 0) ? -1 : 1;
 	xstep *= (isRayFacingRight && xstep < 0) ? -1 : 1;
 
@@ -86,9 +83,11 @@ void castRay(float rayAngle, int stripId)
 			foundHorzWallHit = true;
 			horzWallHitX = nextHorzTouchX;
 			horzWallHitY = nextHorzTouchY;
-			horzWallContent = getMapValue((int)floor(yToCheck / TILE_SIZE), (int)floor(xToCheck / TILE_SIZE));
+			horzWallContent = getMapValue((int)floorf(yToCheck / TILE_SIZE), (int)floorf(xToCheck / TILE_SIZE));
 			break;
-		} else {
+		}
+		else
+		{
 			nextHorzTouchX += xstep;
 			nextHorzTouchY += ystep;
 		}
@@ -100,32 +99,36 @@ void castRay(float rayAngle, int stripId)
 	float vertWallHitY = 0;
 	int vertWallContent = 0;
 
-	xintercept = floor(player.x / TILE_SIZE) * TILE_SIZE;
+	xintercept = floorf(player.x / TILE_SIZE) * TILE_SIZE;
 	xintercept += isRayFacingRight ? TILE_SIZE : 0;
 
-	yintercept = player.y + (xintercept - player.x) * tan(rayAngle);
+	yintercept = player.y + (xintercept - player.x) * tanf(rayAngle);
 
 	xstep = TILE_SIZE;
 	xstep *= isRayFacingLeft ? -1 : 1;
 
-	ystep = TILE_SIZE * tan(rayAngle);
+	ystep = TILE_SIZE * tanf(rayAngle);
 	ystep *= (isRayFacingUp && ystep > 0) ? -1 : 1;
 	ystep *= (isRayFacingDown && ystep < 0) ? -1 : 1;
 
 	float nextVertTouchX = xintercept;
 	float nextVertTouchY = yintercept;
 
-	while (isInsideMap(nextVertTouchX, nextVertTouchY)) {
+	while (isInsideMap(nextVertTouchX, nextVertTouchY))
+	{
 		float xToCheck = nextVertTouchX + (isRayFacingLeft ? -1 : 0);
 		float yToCheck = nextVertTouchY;
 
-		if (DetectCollision(xToCheck, yToCheck)) {
+		if (DetectCollision(xToCheck, yToCheck))
+		{
 			foundVertWallHit = true;
 			vertWallHitX = nextVertTouchX;
 			vertWallHitY = nextVertTouchY;
-			vertWallContent = getMapValue((int)floor(yToCheck / TILE_SIZE), (int)floor(xToCheck / TILE_SIZE));
+			vertWallContent = getMapValue((int)floorf(yToCheck / TILE_SIZE), (int)floorf(xToCheck / TILE_SIZE));
 			break;
-		} else {
+		}
+		else
+		{
 			nextVertTouchX += xstep;
 			nextVertTouchY += ystep;
 		}
@@ -145,7 +148,9 @@ void castRay(float rayAngle, int stripId)
 		rays[stripId].wallHitY = vertWallHitY;
 		rays[stripId].wasHitVertical = true;
 		rays[stripId].wallHitContent = vertWallContent;
-	} else {
+	}
+	else
+	{
 		rays[stripId].distance = horzHitDistance;
 		rays[stripId].wallHitX = horzWallHitX;
 		rays[stripId].wallHitY = horzWallHitY;
@@ -178,7 +183,7 @@ void castAllRays(void)
  */
 void renderRays(void)
 {
-	for (int i = 0; i < NUM_RAYS; i++) 
+	for (int i = 0; i < NUM_RAYS; i++)
 	{
 		drawLine(
 				player.x * MINIMAP_SCALE_FACTOR,

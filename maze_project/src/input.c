@@ -1,15 +1,11 @@
+#include "../inc/graphics_utils.h"
+#include "../inc/game_config.h"
 #include <SDL2/SDL.h>
-#include <stdbool.h>
-#include "../inc/input.h"
-#include "../inc/game.h"
-#include "../inc/player.h"
 
 /**
- * handleInput - Handles user input events.
- * @isRunning: Pointer to the game's running state.
- * @player: Pointer to the Player structure.
+ * processInput - Processes user input to update player state.
  */
-void handleInput(bool *isRunning, Player *player)
+void processInput(void)
 {
 	SDL_Event event;
 
@@ -17,29 +13,42 @@ void handleInput(bool *isRunning, Player *player)
 	{
 		if (event.type == SDL_QUIT)
 		{
-			*isRunning = false;
+			exitGame();
 		}
-		if (event.type == SDL_KEYDOWN)
+		else if (event.type == SDL_KEYDOWN)
 		{
-			if (event.key.keysym.sym == SDLK_ESCAPE)
+			switch (event.key.keysym.sym)
 			{
-				*isRunning = false;
+				case SDLK_UP:
+					player.moveForward = true;
+					break;
+				case SDLK_DOWN:
+					player.moveBackward = true;
+					break;
+				case SDLK_LEFT:
+					player.turnLeft = true;
+					break;
+				case SDLK_RIGHT:
+					player.turnRight = true;
+					break;
 			}
-			if (event.key.keysym.sym == SDLK_w)
+		}
+		else if (event.type == SDL_KEYUP)
+		{
+			switch (event.key.keysym.sym)
 			{
-				movePlayerForward(player);
-			}
-			if (event.key.keysym.sym == SDLK_s)
-			{
-				movePlayerBackward(player);
-			}
-			if (event.key.keysym.sym == SDLK_a)
-			{
-				movePlayerLeft(player);
-			}
-			if (event.key.keysym.sym == SDLK_d)
-			{
-				movePlayerRight(player);
+				case SDLK_UP:
+					player.moveForward = false;
+					break;
+				case SDLK_DOWN:
+					player.moveBackward = false;
+					break;
+				case SDLK_LEFT:
+					player.turnLeft = false;
+					break;
+				case SDLK_RIGHT:
+					player.turnRight = false;
+					break;
 			}
 		}
 	}
