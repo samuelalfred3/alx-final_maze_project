@@ -1,5 +1,4 @@
-#include "../inc/game_config.h"
-#include "../inc/graphics_utils.h"
+#include "../inc/maze.h"
 #include <SDL2/SDL_image.h>
 #include <math.h>
 

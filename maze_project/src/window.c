@@ -1,6 +1,5 @@
+#include "../inc/maze.h"
 #include <SDL2/SDL.h>
-#include "../inc/game_config.h"
-#include "../inc/graphics_utils.h"
 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
@@ -12,15 +11,12 @@ SDL_Renderer *renderer = NULL;
 bool initSDL(void)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-	{
 		return (false);
-	}
 
 	window = SDL_CreateWindow("Maze Game",
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,
-			SCREEN_WIDTH,
-			SCREEN_HEIGHT,
+			WINDOW_WIDTH, WINDOW_HEIGHT,
 			SDL_WINDOW_SHOWN);
 	if (!window)
 	{
@@ -44,14 +40,22 @@ bool initSDL(void)
  */
 void clearScreen(void)
 {
-	SDL_SetRenderDrawColor(renderer, 0x000000FF); /* Black */
+	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF); /* Black */
 	SDL_RenderClear(renderer);
 }
 
 /**
- * closeSDL - Closes SDL, destroying the window and renderer.
+ * renderScreen - Updates the screen by presenting the renderer.
  */
-void closeSDL(void)
+void renderScreen(void)
+{
+	SDL_RenderPresent(renderer);
+}
+
+/**
+ * closeWindow - Closes SDL, destroying the window and renderer.
+ */
+void closeWindow(void)
 {
 	if (renderer)
 	{

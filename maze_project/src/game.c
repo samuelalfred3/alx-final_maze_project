@@ -1,36 +1,32 @@
-#include "../inc/game_config.h"
-#include "../inc/graphics_utils.h"
-#include <math.h>
-#include <stdio.h>
+#include "../inc/maze.h"
 
-/* Global variables for game state */
-static Player player;
-
-void initialize_game(Game *game) {
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		printf("Error initializing SDL: %s\n", SDL_GetError());
+/**
+ * initializeGame - Initializes the game and SDL components.
+ * @game: Pointer to the game structure.
+ */
+void initialize_game(Game *game)
+{
+	if (SDL_Init(SDL_INIT_VIDEO) != 0)
+	{
+		fprintf("Error initializing SDL: %s\n", SDL_GetError());
 		game->is_running = false;
 		return;
 	}
 
-	game->window = SDL_CreateWindow(
-			"3D Maze Game",
-			SDL_WINDOWPOS_CENTERED,
-			SDL_WINDOWPOS_CENTERED,
-			WINDOW_WIDTH,
-			WINDOW_HEIGHT,
-			SDL_WINDOW_SHOWN
-			);
-
-	if (!game->window) {
-		printf("Error creating SDL window: %s\n", SDL_GetError());
+	game->window = SDL_CreateWindow("3D Maze Game",
+			SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+			WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+	if (!game->window)
+	{
+		fprintf("Error creating SDL window: %s\n", SDL_GetError());
 		game->is_running = false;
 		return;
 	}
 
 	game->renderer = SDL_CreateRenderer(game->window, -1, 0);
-	if (!game->renderer) {
-		printf("Error creating SDL renderer: %s\n", SDL_GetError());
+	if (!game->renderer)
+	{
+		fprintf("Error creating SDL renderer: %s\n", SDL_GetError());
 		game->is_running = false;
 		return;
 	}
@@ -49,44 +45,48 @@ void initialize_game(Game *game) {
 	player.rotation_speed = PLAYER_ROTATION_SPEED;
 }
 
-void process_input(Game *game) {
+/**
+ * processInput - Handles player input for movement.
+ * @game: Pointer to the game structure.
+ */
+void process_input(Game *game)
+{
 	SDL_Event event;
-	SDL_PollEvent(&event);
 
-	switch (event.type) {
-		case SDL_QUIT:
-			game->is_running = false;
-			break;
-		case SDL_KEYDOWN:
-			if (event.key.keysym.sym == SDLK_ESCAPE) {
+	while (SDL_PollEvent(&event))
+	{
+		if (event.type == SDL_QUIT)
+			game->isRunning = false;
+		else if (event.type == SDL_KEYDOWN)
+		{
+			if (event.key.keysym.sym == SDLK_ESCAPE)
 				game->is_running = false;
-			}
-			if (event.key.keysym.sym == SDLK_UP) {
+			else if (event.key.keysym.sym == SDLK_UP)
 				player.walk_direction = 1;
-			}
-			if (event.key.keysym.sym == SDLK_DOWN) {
+			else if (event.key.keysym.sym == SDLK_DOWN)
 				player.walk_direction = -1;
-			}
-			if (event.key.keysym.sym == SDLK_RIGHT) {
+			else if (event.key.keysym.sym == SDLK_RIGHT) 
 				player.turn_direction = 1;
-			}
-			if (event.key.keysym.sym == SDLK_LEFT) {
+			else if (event.key.keysym.sym == SDLK_LEFT)
 				player.turn_direction = -1;
-			}
-			break;
-		case SDL_KEYUP:
-			if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN) {
+		}
+		else if (event.type == SDL_KEYUP)
+		{
+			if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN)
 				player.walk_direction = 0;
-			}
-			if (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT) {
+			if (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT)
 				player.turn_direction = 0;
-			}
-			break;
+		}
 	}
 }
 
+/**
+ * renderGame - Renders the player and game components.
+ * @game: Pointer to the game structure.
+ * @player: Pointer to the player structure.
+ */
 void render_game(Game *game, Player *player) {
-	SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 255); /* Black background */
+	SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 255); /* Clear screen */
 	SDL_RenderClear(game->renderer);
 
 	/* Render player */

@@ -1,6 +1,4 @@
-#include "../inc/graphics_utils.h"
-#include "../inc/game_config.h"
-#include <SDL2/SDL.h>
+#include "../inc/maze.h"
 
 /**
  * processInput - Processes user input to update player state.

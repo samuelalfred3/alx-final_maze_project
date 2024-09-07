@@ -1,7 +1,6 @@
+#include "../inc/maze.h"
 #include <SDL2/SDL.h>
 #include <stdbool.h>
-#include "../inc/game_config.h"   /* Include game configuration settings */
-#include "../inc/graphics_utils.h" /* Include graphics-related functions and constants */
 
 /* Global variable for managing game state */
 bool isRunning = true;

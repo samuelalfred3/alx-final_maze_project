@@ -1,6 +1,5 @@
+#include "../inc/maze.h"
 #include <math.h>
-#include "../inc/game_config.h"
-#include "../inc/graphics_utils.h"
 
 /* The map layout represented as a 2D array */
 const int map[MAP_NUM_ROWS][MAP_NUM_COLS] = {
@@ -31,6 +30,7 @@ const int map[MAP_NUM_ROWS][MAP_NUM_COLS] = {
  * isInsideMap - Checks if the coordinates are within the map boundaries.
  * @x: The x-coordinate to check.
  * @y: The y-coordinate to check.
+ *
  * Return: true if inside map boundaries, false otherwise.
  */
 bool isInsideMap(float x, float y)
@@ -43,12 +43,13 @@ bool isInsideMap(float x, float y)
  * DetectCollision - Detects collision at a given position.
  * @x: The x-coordinate to check.
  * @y: The y-coordinate to check.
+ *
  * Return: true if there is a collision, false otherwise.
  */
 bool DetectCollision(float x, float y)
 {
-	int mapX = (int)floorf(x / TILE_SIZE)
-		int mapY = (int)floorf(y / TILE_SIZE);
+	int mapX = (int)floorf(x / TILE_SIZE);
+	int mapY = (int)floorf(y / TILE_SIZE);
 
 	return (map[mapY][mapX] != 0);
 }
@@ -57,6 +58,7 @@ bool DetectCollision(float x, float y)
  * getMapValue - Retrieves the map value at a specific grid position.
  * @row: The row index in the map array.
  * @col: The column index in the map array.
+ *
  * Return: The map value at the specified position.
  */
 int getMapValue(int row, int col)

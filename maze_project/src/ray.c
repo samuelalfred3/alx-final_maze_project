@@ -1,7 +1,5 @@
 #include <math.h>
-#include <SDL2/SDL.h>
-#include "../inc/game_config.h"
-#include "../inc/graphics_utils.h"
+#include "../inc/maze.h"
 
 extern Player player;
 Ray rays[NUM_RAYS];
@@ -56,9 +54,9 @@ void castRay(float rayAngle, int stripId)
 	bool foundHorzWallHit = false;
 	float horzWallHitX = 0;
 	float horzWallHitY = 0;
-	int horzWallContent = 0
+	int horzWallContent = 0;
 
-		yintercept = floorf(player.y / TILE_SIZE) * TILE_SIZE;
+	yintercept = floorf(player.y / TILE_SIZE) * TILE_SIZE;
 	yintercept += isRayFacingDown ? TILE_SIZE : 0;
 
 	xintercept = player.x + (yintercept - player.y) / tanf(rayAngle);
@@ -134,6 +132,7 @@ void castRay(float rayAngle, int stripId)
 		}
 	}
 
+	/* Compare distances */
 	float horzHitDistance = foundHorzWallHit
 		? distanceBetweenPoints(player.x, player.y, horzWallHitX, horzWallHitY)
 		: FLT_MAX;
@@ -156,42 +155,6 @@ void castRay(float rayAngle, int stripId)
 		rays[stripId].wallHitY = horzWallHitY;
 		rays[stripId].wasHitVertical = false;
 		rays[stripId].wallHitContent = horzWallContent;
-	}
-
-	rays[stripId].rayAngle = rayAngle;
-	rays[stripId].isRayFacingDown = isRayFacingDown;
-	rays[stripId].isRayFacingUp = isRayFacingUp;
-	rays[stripId].isRayFacingLeft = isRayFacingLeft;
-	rays[stripId].isRayFacingRight = isRayFacingRight;
-}
-
-/**
- * castAllRays - Cast all rays for the current frame.
- */
-void castAllRays(void)
-{
-	float rayAngle = player.rotationAngle - (FOV_ANGLE / 2);
-	for (int stripId = 0; stripId < NUM_RAYS; stripId++)
-	{
-		castRay(rayAngle, stripId);
-		rayAngle += FOV_ANGLE / NUM_RAYS;
-	}
-}
-
-/**
- * renderRays - Render all rays.
- */
-void renderRays(void)
-{
-	for (int i = 0; i < NUM_RAYS; i++)
-	{
-		drawLine(
-				player.x * MINIMAP_SCALE_FACTOR,
-				player.y * MINIMAP_SCALE_FACTOR,
-				rays[i].wallHitX * MINIMAP_SCALE_FACTOR,
-				rays[i].wallHitY * MINIMAP_SCALE_FACTOR,
-				0xFFFF0000
-				);
 	}
 }
 
