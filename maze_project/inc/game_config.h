@@ -67,12 +67,18 @@ typedef struct
 	bool is_running;
 } Game;
 
+/* Game-related functions */
 void initialize_game(Game *game);
 void process_input(Game *game);
-void update_game(Game *game, Player *player);
 void render_game(Game *game, Player *player);
-void destroy_game(Game *game);
-int main(int argc, char *argv[]);
+void destroy_game(Game *game);c
+
+/* Player-related functions */
+void initPlayer(Player *player);
+void handlePlayerInput(Player *player);
+void movePlayer(Player *player, float deltaTime);
+void renderPlayer(Player *player);
+void cleanUpPlayer(void);
 
 #endif /* GAME_CONFIG_H */
 

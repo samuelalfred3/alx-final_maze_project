@@ -6,7 +6,7 @@
 /* Global variables for game state */
 static Player player;
 
-void initialize_game(Game* game) {
+void initialize_game(Game *game) {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		printf("Error initializing SDL: %s\n", SDL_GetError());
 		game->is_running = false;
@@ -49,7 +49,7 @@ void initialize_game(Game* game) {
 	player.rotation_speed = PLAYER_ROTATION_SPEED;
 }
 
-void process_input(Game* game) {
+void process_input(Game *game) {
 	SDL_Event event;
 	SDL_PollEvent(&event);
 
@@ -85,7 +85,7 @@ void process_input(Game* game) {
 	}
 }
 
-void render_game(Game* game, Player* player) {
+void render_game(Game *game, Player *player) {
 	SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 255); /* Black background */
 	SDL_RenderClear(game->renderer);
 
@@ -103,7 +103,7 @@ void render_game(Game* game, Player* player) {
 	SDL_RenderPresent(game->renderer);
 }
 
-void destroy_game(Game* game) {
+void destroy_game(Game *game) {
 	SDL_DestroyRenderer(game->renderer);
 	SDL_DestroyWindow(game->window);
 	SDL_Quit();
