@@ -13,13 +13,10 @@ bool isRunning = true;
 int main(void)
 {
 	/* Initialize SDL and create the window */
-	if (!initWindow())
+	if (!initializeWindow())
 	{
 		return (1); /* Exit if initialization failed */
 	}
-
-	/* Load wall textures */
-	loadWallTextures();
 
 	/* Set up the game environment */
 	setup_game();
@@ -33,11 +30,10 @@ int main(void)
 	{
 		handleInput(&isRunning, &player);
 		update_game(NULL, &player);
-		render_game(NULL, &player);
+		renderPlayer(&player);
 	}
 
 	/* Clean up resources */
-	freeWallTextures();
 	SDL_DestroyWindow(window); /* Clean up SDL window */
 
 	return (0);

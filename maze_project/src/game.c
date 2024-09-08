@@ -8,17 +8,17 @@ void initialize_game(Game *game)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
-		fprintf("Error initializing SDL: %s\n", SDL_GetError());
+		fprintf(stderr, "Error initializing SDL: %s\n", SDL_GetError());
 		game->is_running = false;
 		return;
 	}
 
 	game->window = SDL_CreateWindow("3D Maze Game",
 			SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-			WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+			SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	if (!game->window)
 	{
-		fprintf("Error creating SDL window: %s\n", SDL_GetError());
+		fprintf(stderr, "Error creating SDL window: %s\n", SDL_GetError());
 		game->is_running = false;
 		return;
 	}
@@ -26,7 +26,7 @@ void initialize_game(Game *game)
 	game->renderer = SDL_CreateRenderer(game->window, -1, 0);
 	if (!game->renderer)
 	{
-		fprintf("Error creating SDL renderer: %s\n", SDL_GetError());
+		fprintf(stderr, "Error creating SDL renderer: %s\n", SDL_GetError());
 		game->is_running = false;
 		return;
 	}
@@ -34,15 +34,15 @@ void initialize_game(Game *game)
 	game->is_running = true;
 
 	/* Initialize player */
-	player.x = WINDOW_WIDTH / 2;
-	player.y = WINDOW_HEIGHT / 2;
+	player.x = SCREEN_WIDTH / 2;
+	player.y = SCREEN_HEIGHT / 2;
 	player.width = 10;
 	player.height = 10;
-	player.rotation_angle = 0;
-	player.walk_direction = 0;
-	player.turn_direction = 0;
-	player.move_speed = PLAYER_SPEED;
-	player.rotation_speed = PLAYER_ROTATION_SPEED;
+	player.rotationAngle = 0;
+	player.walkDirection = 0;
+	player.turnDirection = 0;
+	player.move_speed = PLAYER_MOVE_SPEED;
+	player.rotation_speed = PLAYER_TURN_SPEED;
 }
 
 /**
@@ -56,26 +56,26 @@ void process_input(Game *game)
 	while (SDL_PollEvent(&event))
 	{
 		if (event.type == SDL_QUIT)
-			game->isRunning = false;
+			game->is_running = false;
 		else if (event.type == SDL_KEYDOWN)
 		{
 			if (event.key.keysym.sym == SDLK_ESCAPE)
 				game->is_running = false;
 			else if (event.key.keysym.sym == SDLK_UP)
-				player.walk_direction = 1;
+				player.walkDirection = 1;
 			else if (event.key.keysym.sym == SDLK_DOWN)
-				player.walk_direction = -1;
+				player.walkDirection = -1;
 			else if (event.key.keysym.sym == SDLK_RIGHT) 
-				player.turn_direction = 1;
+				player.turnDirection = 1;
 			else if (event.key.keysym.sym == SDLK_LEFT)
-				player.turn_direction = -1;
+				player.turnDirection = -1;
 		}
 		else if (event.type == SDL_KEYUP)
 		{
 			if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN)
-				player.walk_direction = 0;
+				player.walkDirection = 0;
 			if (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT)
-				player.turn_direction = 0;
+				player.turnDirection = 0;
 		}
 	}
 }

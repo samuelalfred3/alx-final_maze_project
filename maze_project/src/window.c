@@ -16,7 +16,7 @@ bool initSDL(void)
 	window = SDL_CreateWindow("Maze Game",
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,
-			WINDOW_WIDTH, WINDOW_HEIGHT,
+			SCREEN_WIDTH, SCREEN_HEIGHT,
 			SDL_WINDOW_SHOWN);
 	if (!window)
 	{

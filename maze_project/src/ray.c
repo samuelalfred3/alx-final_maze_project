@@ -1,5 +1,6 @@
-#include <math.h>
 #include "../inc/maze.h"
+#include <math.h>
+#include <stdbool.h>
 
 extern Player player;
 Ray rays[NUM_RAYS];
@@ -145,16 +146,16 @@ void castRay(float rayAngle, int stripId)
 		rays[stripId].distance = vertHitDistance;
 		rays[stripId].wallHitX = vertWallHitX;
 		rays[stripId].wallHitY = vertWallHitY;
-		rays[stripId].wasHitVertical = true;
 		rays[stripId].wallHitContent = vertWallContent;
+		rays[stripId].wasHitVertical = true;
 	}
 	else
 	{
 		rays[stripId].distance = horzHitDistance;
 		rays[stripId].wallHitX = horzWallHitX;
 		rays[stripId].wallHitY = horzWallHitY;
-		rays[stripId].wasHitVertical = false;
 		rays[stripId].wallHitContent = horzWallContent;
+		rays[stripId].wasHitVertical = false;
 	}
 }
 

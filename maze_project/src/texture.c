@@ -46,47 +46,28 @@ void drawLine(int x0, int y0, int x1, int y1, color_t color)
 }
 
 /**
- * loadTexture - Loads an image file as an SDL texture.
- * @filePath: Path to the image file.
- *
- * Return: Pointer to the SDL texture, or NULL on failure.
- */
-SDL_Texture *loadTexture(const char *filePath)
-{
-	SDL_Surface *surface = IMG_Load(filePath);
-	if (!surface)
-	{
-		fprintf(stderr, "Error loading texture: %s\n", IMG_GetError());
-		return (NULL);
-	}
-	SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-	SDL_FreeSurface(surface);
-	return (texture);
-}
-
-/**
- * WallTexturesready - Loads wall textures into the wallTextures array.
+ * WallTexturesready - Sets default colors for the walls and character.
  */
 void WallTexturesready(void)
 {
-	wallTextures[0] = loadTexture("images/wall.png");
-	wallTextures[1] = loadTexture("images/ground.png");
-	wallTextures[2] = loadTexture("images/ceiling.png");
-	wallTextures[3] = loadTexture("images/character.png");
+	wallColors[0] = 0xFF0000FF; /* Red walls */
+	wallColors[1] = 0x00FF00FF; /* Green ground */
+	wallColors[2] = 0x0000FFFF; /* Blue ceiling */
+	wallColors[3] = 0xFFFFFFFF; /* White character */
 }
 
 /**
- * freeWallTextures - Frees all loaded wall textures.
+ * drawWall - Draws a wall with a specific color based on wall type.
+ * @x: The x-coordinate.
+ * @y: The y-coordinate.
+ * @wallType: The type of the wall.
  */
-void freeWallTextures(void)
+void drawWall(int x, int y, int wallType)
 {
-	for (int i = 0; i < NUM_WALL_TEXTURES; i++)
+	if (wallType >= 0 && wallType < 4)
 	{
-		if (wallTextures[i])
-		{
-			SDL_DestroyTexture(wallTextures[i]);
-			wallTextures[i] = NULL;
-		}
+		color_t color = wallColors[wallType];
+		drawPixel(x, y, color);
 	}
 }
 

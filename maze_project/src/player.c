@@ -28,8 +28,8 @@ void initPlayer(Player *player)
 	}
 
 	/* Initialize player properties */
-	player->x = WINDOW_WIDTH / 2;
-	player->y = WINDOW_HEIGHT / 2;
+	player->x = SCREEN_WIDTH / 2;
+	player->y = SCREEN_HEIGHT / 2;
 	player->width = 32;
 	player->height = 32;
 	player->rotationAngle = 0;
@@ -49,14 +49,14 @@ void handlePlayerInput(Player *player)
 	{
 		if (event.type == SDL_QUIT)
 		{
-			isRunning = false;
+			isGameRunning = false;
 		}
 		if (event.type == SDL_KEYDOWN)
 		{
 			switch (event.key.keysym.sym)
 			{
 				case SDLK_ESCAPE:
-					isRunning = false;
+					isGameRunning = false;
 					break;
 				case SDLK_UP:
 					player->walkDirection = +1;
@@ -144,4 +144,3 @@ void cleanUpPlayer(void)
 {
 	SDL_DestroyTexture(playerTexture);
 }
-

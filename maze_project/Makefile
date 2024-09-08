@@ -1,42 +1,24 @@
-# Makefile for Maze Project
-
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra -pedantic
+CFLAGS = -Wall -Werror -Wextra -pedantic -Iinc
+LDFLAGS = -lSDL2 -lSDL2_image -lm  # Added -lm for math library
 
-# Directories
-SRC_DIR = src
-INC_DIR = inc
-OBJ_DIR = obj
+# Source and object files
+SRCS = src/game.c src/graphics.c src/input.c src/main.c src/map.c src/player.c src/ray.c src/texture.c src/window.c
+OBJS = $(SRCS:.c=.o)
 
-# Source files
-SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
-OBJ_FILES = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
-
-# Target executable
+# Executable name
 TARGET = maze_game
 
-# Default rule
-all: $(TARGET)
+# Build target
+$(TARGET): $(OBJS)
+	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
 
-# Link object files to create the executable
-$(TARGET): $(OBJ_FILES)
-	$(CC) $(CFLAGS) -o $@ $(OBJ_FILES) -lSDL2 -lSDL2_image
+# Rule for building object files
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# Compile source files into object files
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -I$(INC_DIR) -c $< -o $@
-
-# Clean object files and executable
+# Clean rule
 clean:
-	rm -f $(OBJ_DIR)/*.o $(TARGET)
-
-# Clean all generated files including the executable
-fclean: clean
-
-# Rebuild the project
-re: fclean all
-
-.PHONY: all clean fclean re
+	rm -f $(OBJS) $(TARGET)
 
