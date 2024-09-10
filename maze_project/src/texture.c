@@ -1,6 +1,7 @@
 #include "../inc/maze.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <math.h>
 
 /**
  * drawPixel - Draws a pixel on the screen at (x, y) with a given color.

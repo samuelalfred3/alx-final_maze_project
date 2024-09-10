@@ -25,11 +25,12 @@
 /* Raycasting constants */
 #define FOV (60 * (M_PI / 180))  /* Field of view in radians */
 #define NUM_RAYS SCREEN_WIDTH     /* One ray per column of the screen */
+#define FRAME_TIME_LENGTH 16
 
 /* Number of wall textures */
 #define NUM_WALL_TEXTURES 4
 
-#define PI 3.141592653589793
+#define PI 3.14159265358979323846
 
 /* Color buffer to store pixel data */
 extern uint32_t *colorBuffer;
@@ -89,42 +90,6 @@ typedef struct
 
 typedef uint32_t color_t;
 
-/* Function declarations */
-void setup(void);
-void update(void);
-void render(void);
-void handleInput(bool *isRunning, Player *player);
-void destroyWindow(void);
-bool initializeWindow(void);
-void clearColorBuffer(uint32_t color);
-void renderColorBuffer(void);
-void drawPixel(int x, int y, uint32_t color);
-void drawLine(int x0, int y0, int x1, int y1, uint32_t color);
-void WallTexturesready(void);
-void drawWall(int x, int y, int wallType);
-void castAllRays(void);
-void castRay(float rayAngle, int stripId);
-bool hasWallAt(float x, float y);
-float normalizeAngle(float angle);
-float distanceBetweenPoints(float x1, float y1, float x2, float y2);
-int mapHasWallAt(float x, float y);
-bool isInsideMap(float x, float y);
-bool DetectCollision(float x, float y);
-int getMapValue(int row, int col);
-void renderMap(void);
-void movePlayer(Player *player, float deltaTime);
-void processInput(void);
-void exitGame(void);
-void setup_game(void);
-void initPlayer(Player *player);
-void update_game(void *param, Player *player);
-void renderPlayer(Player *player);
-
-/* Map functions */
-int getMapValue(int row, int col);
-void drawRect(int x, int y, int width, int height, uint32_t color);
-void drawMapGrid(void);
-
 /* SDL-related variables */
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
@@ -143,6 +108,40 @@ extern color_t wallColors[4];
 
 /* Map representation (hardcoded for now) */
 extern const int map[MAP_NUM_ROWS][MAP_NUM_COLS];
+
+/* Function declarations */
+void initialize_game(Game *game);
+void process_input(Game *game);
+void render_game(Game *game, Player *player);
+void destroy_game(Game *game);
+bool initializeWindow(void);
+void destroyWindow(void);
+void clearColorBuffer(uint32_t color);
+void renderColorBuffer(void);
+void processInput(void);
+bool isInsideMap(float x, float y);
+bool DetectCollision(float x, float y);
+int getMapValue(int row, int col);
+void initPlayer(Player *player);
+void handlePlayerInput(Player *player);
+void movePlayer(Player *player, float deltaTime);
+void renderPlayer(Player *player);
+void cleanUpPlayer(void);
+float normalizeAngle(float angle);
+float distanceBetweenPoints(float x1, float y1, float x2, float y2);
+void castRay(float rayAngle, int stripId);
+void drawPixel(int x, int y, color_t color);
+void drawLine(int x0, int y0, int x1, int y1, color_t color);
+void WallTexturesready(void);
+void drawWall(int x, int y, int wallType);
+bool initSDL(void);
+void clearScreen(void);
+void renderScreen(void);
+void renderWall(void);
+void renderRays(void);
+void closeWindow(void);
+void renderMap(void);
+void freeWallTextures(void);
 
 #endif /* MAZE_H */
 

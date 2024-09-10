@@ -1,24 +1,44 @@
-# Compiler and flags
+# Compiler
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra -pedantic -Iinc
-LDFLAGS = -lSDL2 -lSDL2_image -lm  # Added -lm for math library
 
-# Source and object files
-SRCS = src/game.c src/graphics.c src/input.c src/main.c src/map.c src/player.c src/ray.c src/texture.c src/window.c
+# Compiler flags
+CFLAGS = -Wall -Werror -Wextra -pedantic
+
+# Linker flags
+LDFLAGS = `sdl2-config --cflags --libs` -lSDL2_image
+
+# Directories
+SRC_DIR = src
+INC_DIR = inc
+
+# Source files
+SRCS = $(wildcard $(SRC_DIR)/*.c)
 OBJS = $(SRCS:.c=.o)
 
-# Executable name
-TARGET = maze_game
+# Executable
+EXEC = maze_game
 
 # Build target
-$(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
+all: $(EXEC)
 
-# Rule for building object files
+# Link the executable
+$(EXEC): $(OBJS)
+	$(CC) $(OBJS) -o $(EXEC) $(LDFLAGS)
+
+# Compile source files
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -I$(INC_DIR) -c $< -o $@
 
-# Clean rule
+# Clean up build files
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(EXEC)
+
+# Remove all generated files
+fclean: clean
+
+# Rebuild the project
+re: fclean all
+
+# Phony targets
+.PHONY: all clean fclean re
 
