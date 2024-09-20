@@ -1,4 +1,4 @@
-#include "../headers/header.h"
+#include "../inc/maze.h"
 
 static const int map[MAP_NUM_ROWS][MAP_NUM_COLS] = {
 	{6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6},
@@ -18,77 +18,69 @@ static const int map[MAP_NUM_ROWS][MAP_NUM_COLS] = {
 
 /**
  * DetectCollision - Checks if there could be a collision
- * with the wall in the next player advance
- * @x: next x coordinate
- * @y: next y coordinate
- * Return: true if collision is detected, false otherwise
-*/
-
+ * with the wall in the next player advance.
+ * @x: Next x coordinate.
+ * @y: Next y coordinate.
+ * Return: true if collision is detected, false otherwise.
+ */
 bool DetectCollision(float x, float y)
 {
-	int mapGridX, mapGridY;
-
 	if (x < 0 || x >= MAP_NUM_COLS * TILE_SIZE ||
 			y < 0 || y >= MAP_NUM_ROWS * TILE_SIZE)
+	{
 		return (true);
+	}
 
-	mapGridX = floor(x / TILE_SIZE);
-	mapGridY = floor(y / TILE_SIZE);
-	return (map[mapGridY][mapGridX] != 0);
+	int mapGridX = floor(x / TILE_SIZE);
+	int mapGridY = floor(y / TILE_SIZE);
+
+	return (map[mapGridY][mapGridX] != 0); /* Collision detected if not 0 */
 }
 
 /**
- * isInsideMap - check if we continue within the map
- * @x: next x coordinate
- * @y: next y coordinate
- * @Return: true if it is within the map, false otherwise
-*/
-
+ * isInsideMap - Check if we continue within the map.
+ * @x: Next x coordinate.
+ * @y: Next y coordinate.
+ * Return: true if it is within the map, false otherwise.
+ */
 bool isInsideMap(float x, float y)
 {
-	return (x >= 0 && x <= MAP_NUM_COLS * TILE_SIZE &&
-				y >= 0 && y <= MAP_NUM_ROWS * TILE_SIZE);
+	return ((x >= 0 && x < MAP_NUM_COLS * TILE_SIZE &&
+			y >= 0 && y < MAP_NUM_ROWS * TILE_SIZE));
 }
 
 /**
- * getMapValue - check if we continue within the map
- * @row: map row to check
- * @col: map column to check
- * @Return: The position value in the map
-*/
-
+ * getMapValue - Get the value at a specific position in the map.
+ * @row: Row to check.
+ * @col: Column to check.
+ * Return: The position value in the map.
+ */
 int getMapValue(int row, int col)
 {
-
 	return (map[row][col]);
-
 }
 
 /**
- * renderMap - render the map
- *
-*/
-
+ * renderMap - Render the map.
+ */
 void renderMap(void)
 {
-	int i, j, tileX, tileY;
-	color_t tileColor;
-
-	for (i = 0; i < MAP_NUM_ROWS; i++)
+	for (int i = 0; i < MAP_NUM_ROWS; i++)
 	{
-		for (j = 0; j < MAP_NUM_COLS; j++)
+		for (int j = 0; j < MAP_NUM_COLS; j++)
 		{
-			tileX = j * TILE_SIZE;
-			tileY = i * TILE_SIZE;
-			tileColor = map[i][j] != 0 ? 0xFFFFFFFF : 0x00000000;
+			int tileX = j * TILE_SIZE;
+			int tileY = i * TILE_SIZE;
+			color_t tileColor = map[i][j] != 0 ? 0xFFFFFFFF : 0x00000000;
 
 			drawRect(
-				tileX * MINIMAP_SCALE_FACTOR,
-				tileY * MINIMAP_SCALE_FACTOR,
-				TILE_SIZE * MINIMAP_SCALE_FACTOR,
-				TILE_SIZE * MINIMAP_SCALE_FACTOR,
-				tileColor
-			);
+					tileX * MINIMAP_SCALE_FACTOR,
+					tileY * MINIMAP_SCALE_FACTOR,
+					TILE_SIZE * MINIMAP_SCALE_FACTOR,
+					TILE_SIZE * MINIMAP_SCALE_FACTOR,
+					tileColor
+					);
 		}
 	}
 }
+

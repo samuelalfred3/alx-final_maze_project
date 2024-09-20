@@ -1,4 +1,4 @@
-#include "../headers/header.h"
+#include "../inc/maze.h"
 
 bool GameRunning = false;
 int TicksLastFrame;
@@ -6,8 +6,7 @@ player_t player;
 
 /**
  * setup_game - initialize player variables and load wall textures
- *
-*/
+ */
 
 void setup_game(void)
 {
@@ -21,15 +20,15 @@ void setup_game(void)
 	player.turnDirection = 0;
 	player.turnSpeed = 45 * (PI / 180);
 	player.rotationAngle = PI / 2;
+
 	WallTexturesready();
 }
 
 
 /**
- * update_game - update_game delta time, the ticks last frame
- *          the player movement and the ray casting
- *
-*/
+ * update_game - Update delta time, ticks last frame,
+ *               player movement, and ray casting.
+ */
 void update_game(void)
 {
 	float DeltaTime;
@@ -39,8 +38,8 @@ void update_game(void)
 	{
 		SDL_Delay(timeToWait);
 	}
-	DeltaTime = (SDL_GetTicks() - TicksLastFrame) / 1000.0f;
 
+	DeltaTime = (SDL_GetTicks() - TicksLastFrame) / 1000.0f;
 	TicksLastFrame = SDL_GetTicks();
 
 	movePlayer(DeltaTime);
@@ -49,26 +48,21 @@ void update_game(void)
 
 /**
  * render - calls all functions needed for on-screen rendering
- *
-*/
+ */
 
 void render_game(void)
 {
 	clearColorBuffer(0xFF000000);
-
 	renderWall();
-
 	renderMap();
 	renderRays();
 	renderPlayer();
-
 	renderColorBuffer();
 }
 
 /**
  * Destroy - free wall textures and destroy window
- *
-*/
+ */
 void destroy_game(void)
 {
 	freeWallTextures();
@@ -84,6 +78,11 @@ int main(void)
 {
 	GameRunning = initializeWindow();
 
+	if (!GameRunning)
+	{
+		return 1;
+	}
+
 	setup_game();
 
 	while (GameRunning)
@@ -92,6 +91,8 @@ int main(void)
 		update_game();
 		render_game();
 	}
+
 	destroy_game();
 	return (0);
 }
+

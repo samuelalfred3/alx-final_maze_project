@@ -1,4 +1,4 @@
-#include "../headers/header.h"
+#include "../inc/maze.h"
 
 /**
  * distanceBetweenPoints - Finds horizontal intersection with the wall

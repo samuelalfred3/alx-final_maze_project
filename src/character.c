@@ -1,9 +1,8 @@
-#include "../headers/header.h"
-
+#include "../inc/maze.h"
 
 /**
- * movePlayer - set the next position of the player
- * @DeltaTime: time elapsed since the last frame
+ * movePlayer - Set the next position of the player.
+ * @DeltaTime: Time elapsed since the last frame.
 */
 
 void movePlayer(float DeltaTime)
@@ -24,8 +23,7 @@ void movePlayer(float DeltaTime)
 }
 
 /**
- * renderPlayer - render the player
- *
+ * renderPlayer - Render the player on the screen.
 */
 
 void renderPlayer(void)
@@ -38,3 +36,4 @@ void renderPlayer(void)
 		0xFFFFFFFF
 	);
 }
+

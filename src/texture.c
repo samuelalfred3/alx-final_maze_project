@@ -1,4 +1,6 @@
-#include "../headers/header.h"
+#include "../inc/maze.h"
+
+texture_t wallTextures[NUM_TEXTURES];
 
 static const char *textureFileNames[NUM_TEXTURES] = {
 	"./images/redbrick.png",
@@ -13,8 +15,7 @@ static const char *textureFileNames[NUM_TEXTURES] = {
 
 /**
  * WallTexturesready - load textures in the respective position
- *
-*/
+ */
 void WallTexturesready(void)
 {
 	int i;
@@ -35,15 +36,21 @@ void WallTexturesready(void)
 				wallTextures[i].height = upng_get_height(upng);
 				wallTextures[i].texture_buffer = (color_t *)upng_get_buffer(upng);
 			}
+			else
+			{
+				fprintf(stderr, "Failed to load texture: %s\n", textureFileNames[i]);
+			}
+		}
+		else
+		{
+			fprintf(stderr, "Failed to create texture from file: %s\n", textureFileNames[i]);
 		}
 	}
-
 }
 
 /**
  * freeWallTextures - free wall textures
- *
-*/
+ */
 
 void freeWallTextures(void)
 {

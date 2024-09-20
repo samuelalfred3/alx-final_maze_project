@@ -1,4 +1,4 @@
-#include "../headers/header.h"
+#include "../inc/maze.h"
 
 ray_t rays[NUM_RAYS];
 
