@@ -7,11 +7,13 @@
 #include <limits.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <time.h>
 #include "upng.h"
 
 /* Window and screen dimensions */
 #define SCREEN_WIDTH (MAP_NUM_COLS * TILE_SIZE)
-#define SCREEN_HEIGHT (MAP_NUM_ROWS * TILE_SIZE) 
+#define SCREEN_HEIGHT (MAP_NUM_ROWS * TILE_SIZE)
 
 /* Map dimensions */
 #define PI 3.14159265
@@ -23,27 +25,64 @@
 #define NUM_TEXTURES 8
 
 /* Raycasting constants */
-#define FOV_ANGLE (60 * (PI / 180))  /* Field of View angle in radians */
+#define FOV_ANGLE (60 * (PI / 180))
 #define NUM_RAYS SCREEN_WIDTH
 #define PROJ_PLANE ((SCREEN_WIDTH / 2) / tan(FOV_ANGLE / 2))
 #define FPS 30
 #define FRAME_TIME_LENGTH (1000 / FPS)
 
+/* Rain constants */
+#define RAIN_DROP_COUNT 100
+#define RAIN_DROP_LENGTH 10
+#define RAIN_DROP_COLOR 0x00BFFF
+#define RAIN_SPEED_MIN 50
+#define RAIN_SPEED_MAX 100
+
+/* Type definitions */
 typedef uint32_t color_t;  /* Define a type for colors */
 
 /* Game state management */
 extern bool GameRunning;
 void handleInput(void);
 
+/* Game structure */
+typedef struct game_s
+{
+	SDL_Window *window;
+	SDL_Renderer *renderer;
+} Game;
+
 /* Rendering functions */
 bool initializeWindow(void);
 void destroyWindow(void);
 void clearColorBuffer(color_t color);
-void render_game(void);
+void render_game(Game *game);
 void renderColorBuffer(void);
 void drawPixel(int x, int y, color_t color);
 void drawRect(int x, int y, int width, int height, color_t color);
 void drawLine(int x0, int y0, int x1, int y1, color_t color);
+
+/* Struct for individual raindrop particles */
+typedef struct particle_s
+{
+	int x;
+	int y;
+	float speed;
+} particle_t;
+
+/* Struct for rain effect */
+typedef struct rain_s
+{
+	particle_t particles[RAIN_DROP_COUNT];
+	bool enabled;
+} rain_t;
+
+/* Function declarations */
+void initRain(rain_t *rain);
+void updateRain(rain_t *rain, float deltaTime);
+void renderRain(rain_t *rain, SDL_Renderer *renderer);
+
+extern rain_t rain;
 
 /* Map functions */
 bool DetectCollision(float x, float y);
@@ -52,11 +91,12 @@ void renderMap(void);
 int getMapValue(int row, int col);
 
 /* Texture structures and functions */
-typedef struct texture_s {
-	int width;              /* Texture width */
-	int height;             /* Texture height */
-	color_t *texture_buffer; /* Pointer to texture buffer */
-	upng_t *upngTexture;    /* Pointer to uPNG texture */
+typedef struct texture_s
+{
+	int width;                /* Texture width */
+	int height;               /* Texture height */
+	color_t *texture_buffer;  /* Pointer to texture buffer */
+	upng_t *upngTexture;      /* Pointer to uPNG texture */
 } texture_t;
 
 extern texture_t wallTextures[NUM_TEXTURES]; /* Array of wall textures */
@@ -68,7 +108,8 @@ void freeWallTextures(void);
 void renderWall(void);
 
 /* Player structure and functions */
-typedef struct player_s {
+typedef struct player_s
+{
 	float x;               /* Player's x coordinate */
 	float y;               /* Player's y coordinate */
 	float width;           /* Player's width */
@@ -86,7 +127,8 @@ void movePlayer(float deltaTime);
 void renderPlayer(void);
 
 /* Raycasting structures and functions */
-typedef struct ray_s {
+typedef struct ray_s
+{
 	float rayAngle;        /* Angle of the ray */
 	float wallHitX;       /* X coordinate of wall hit */
 	float wallHitY;       /* Y coordinate of wall hit */

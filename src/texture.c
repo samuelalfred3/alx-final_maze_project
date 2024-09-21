@@ -3,12 +3,12 @@
 texture_t wallTextures[NUM_TEXTURES];
 
 static const char *textureFileNames[NUM_TEXTURES] = {
-	"./images/redbrickwall.png",
-	"./images/purplestone.png",
+	"./images/purple.png",
+	"./images/redwall.png",
 	"./images/mossystonewall.png",
-	"./images/graystone.png",
-	"./images/colorstone.png",
 	"./images/grassstone.png",
+	"./images/colorstone.png",
+	"./images/bluewall.png",
 	"./images/woodtexture.png",
 	"./images/Character.png",
 };

@@ -3,14 +3,14 @@
 bool GameRunning = false;
 int TicksLastFrame;
 player_t player;
+rain_t rain;
+Game game;
 
 /**
  * setup_game - initialize player variables and load wall textures
  */
-
 void setup_game(void)
 {
-
 	player.x = SCREEN_WIDTH / 2;
 	player.y = SCREEN_HEIGHT / 2;
 	player.width = 1;
@@ -22,8 +22,8 @@ void setup_game(void)
 	player.rotationAngle = PI / 2;
 
 	WallTexturesready();
+	initRain(&rain);
 }
-
 
 /**
  * update_game - Update delta time, ticks last frame,
@@ -31,7 +31,7 @@ void setup_game(void)
  */
 void update_game(void)
 {
-	float DeltaTime;
+	float deltaTime;
 	int timeToWait = FRAME_TIME_LENGTH - (SDL_GetTicks() - TicksLastFrame);
 
 	if (timeToWait > 0 && timeToWait <= FRAME_TIME_LENGTH)
@@ -39,20 +39,21 @@ void update_game(void)
 		SDL_Delay(timeToWait);
 	}
 
-	DeltaTime = (SDL_GetTicks() - TicksLastFrame) / 1000.0f;
+	deltaTime = (SDL_GetTicks() - TicksLastFrame) / 1000.0f;
 	TicksLastFrame = SDL_GetTicks();
 
-	movePlayer(DeltaTime);
+	movePlayer(deltaTime);
 	castAllRays();
+	updateRain(&rain, deltaTime);
 }
 
 /**
- * render - calls all functions needed for on-screen rendering
+ * render_game - calls all functions needed for on-screen rendering
  */
-
-void render_game(void)
+void render_game(Game *game)
 {
 	clearColorBuffer(0xFF000000);
+	renderRain(&rain, game->renderer);
 	renderWall();
 	renderMap();
 	renderRays();
@@ -61,7 +62,7 @@ void render_game(void)
 }
 
 /**
- * Destroy - free wall textures and destroy window
+ * destroy_game - free wall textures and destroy window
  */
 void destroy_game(void)
 {
@@ -72,15 +73,14 @@ void destroy_game(void)
 /**
  * main - main function
  * Return: 0
-*/
-
+ */
 int main(void)
 {
 	GameRunning = initializeWindow();
 
 	if (!GameRunning)
 	{
-		return 1;
+		return (1);
 	}
 
 	setup_game();
@@ -89,7 +89,7 @@ int main(void)
 	{
 		handleInput();
 		update_game();
-		render_game();
+		render_game(&game);
 	}
 
 	destroy_game();

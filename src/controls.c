@@ -3,6 +3,10 @@
 /**
  * handleKeyDown - process input when a key is pressed
  * @event: the SDL event containing key press information
+ *
+ * This function adjusts the player's walk and turn direction based
+ * on the key pressed (WASD or arrow keys) and exits the game
+ * when the ESC key is pressed.
  */
 void handleKeyDown(SDL_Event event)
 {
@@ -33,6 +37,9 @@ void handleKeyDown(SDL_Event event)
 /**
  * handleKeyUp - process input when a key is released
  * @event: the SDL event containing key release information
+ *
+ * This function resets the player's walk and turn direction
+ * to zero when the key (WASD or arrow keys) is released.
  */
 void handleKeyUp(SDL_Event event)
 {
@@ -55,18 +62,28 @@ void handleKeyUp(SDL_Event event)
 
 /**
  * handleInput - process input from the keyboard
+ *
+ * This function processes input by polling SDL events.
+ * It handles quitting the game, key presses, and key releases.
  */
 void handleInput(void)
 {
 	SDL_Event event;
 
-	SDL_PollEvent(&event);
-
-	if (event.type == SDL_QUIT)
-		GameRunning = false;
-	else if (event.type == SDL_KEYDOWN)
-		handleKeyDown(event);
-	else if (event.type == SDL_KEYUP)
-		handleKeyUp(event);
+	while (SDL_PollEvent(&event))
+	{
+		if (event.type == SDL_QUIT)
+		{
+			GameRunning = false;
+		}
+		else if (event.type == SDL_KEYDOWN)
+		{
+			handleKeyDown(event);
+		}
+		else if (event.type == SDL_KEYUP)
+		{
+			handleKeyUp(event);
+		}
+	}
 }
 
